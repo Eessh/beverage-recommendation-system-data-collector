@@ -16,3 +16,6 @@ Just a simple api, having only 4 methods:
 
 ### Sample response of: `Most bought beverage`
 ![Most bought beverage](./screenshots/most_bought.png)
+
+### Database consists of only one table: `Transactions`
+![Transactions table](./screenshots/db_table.png)

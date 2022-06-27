@@ -11,7 +11,7 @@ A simple api for a database, which stores the transactions made in the app: [Bev
 
 ### Transactions related: `/transactions`
 - `GET` - returns all transactions in `transactions table` (Edit: Should actually return beverages bought in that transaction too, will implement it :)
-- `POST` - adds transaction(`request.body.transaction`) into `transactions table`, adds beverages(`request.body.transaction.beverages`) into `transactionbeverages table`. See the function which does this thing [over here](https://github.com/Eessh/beverage-recommendation-system-data-collector/blob/f4e79e8e378855a8cd5049f8978f44de09a84b7e/HerokuDBQueries.js#L232).
+- `POST` - adds transaction(`request.body.transaction`) into `transactions table`, adds beverages(`request.body.transaction.beverages`) into `transactionbeverages table`. See the function which does this thing [over here](https://github.com/Eessh/beverage-recommendation-system-data-collector/blob/aee9a24ee4c597b325ef8bd35dbef28042beb2ca/HerokuDBQueries.js#L232).
 
 ### Tags related: `/tags`
 - `GET` - returns all tags in `tags table`

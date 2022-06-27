@@ -249,8 +249,10 @@ const addTransaction = (req, res) => {
   };
 
   client.query(`
-    INSERT INTO transactions (season, gender, age, emotion, weather, temperature)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO transactions (season, gender, age, emotion_id, weather, temperature)
+    SELECT $1, $2, $3, id, $5, $6
+    FROM emotions
+    WHERE name=$4
     RETURNING id
   `, [
     transactionData.season,
@@ -550,7 +552,7 @@ const createTransactionsTable = (req, res) => {
       season VARCHAR(30),
       gender VARCHAR(30),
       age INT,
-      emotion VARCHAR(30),
+      emotion_id INT NOT NULL REFERENCES emotions(id),
       weather VARCHAR(30),
       temperature FLOAT(1)
     )
@@ -658,7 +660,6 @@ const test = (req, res) => {
       // returning server error
       res.status(500).json({info: `Error while getting all rows in transactionbeverages table.`});
     }
-    console.log(`Log: Rows: ${results.rows}`);
     res.status(200).json({transactionbeverages: results.rows});
   });
 };

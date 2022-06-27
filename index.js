@@ -41,7 +41,12 @@ const {
 
   createTransactionsTable,
   clearTransactionsTable,
-  removeTransactionsTable
+  removeTransactionsTable,
+
+  createTransactionBeveragesTable,
+  clearTransactionBeveragesTable,
+  removeTransactionBeveragesTable,
+  test
 } = require("./HerokuDBQueries");
 
 app.get("/", (req, res) => {
@@ -80,6 +85,11 @@ app.delete("/emotionsTable", removeEmotionsTable);
 app.post("/transactionsTable", createTransactionsTable);
 app.patch("/transactionsTable", clearTransactionsTable);
 app.delete("/transactionsTable", removeTransactionsTable);
+
+app.post("/transactionbeveragesTable", createTransactionBeveragesTable);
+app.patch("/transactionbeveragesTable", clearTransactionBeveragesTable);
+app.delete("/transactionbeveragesTable", removeTransactionBeveragesTable);
+app.get("/transactionbeveragesTable", test);
 
 // app.get("/users", db.getUsers);
 // app.get("/users/:id", db.getUserById);

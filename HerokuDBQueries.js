@@ -249,8 +249,9 @@ const addTransaction = (req, res) => {
   };
 
   client.query(`
-    INSERT INTO transactions (season, gender, age, emotion, weather, temperature, beverages)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    INSERT INTO transactions (season, gender, age, emotion, weather, temperature)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING id
   `, [
     transactionData.season,
     transactionData.gender,
@@ -258,7 +259,6 @@ const addTransaction = (req, res) => {
     transactionData.emotion,
     transactionData.weather,
     parseInt(transactionData.temperature),
-    constructArrayStr(transactionData.beverages)
   ], (err, results) => {
     if (err) {
       console.log("Log: Error occurred while inserting a transaction: ", err);
@@ -266,8 +266,31 @@ const addTransaction = (req, res) => {
       res.status(500).json({info: "Error occurred while inserting a transaction"});
       return;
     }
-    console.log("Log: transaction added");
-    res.status(200).json({info: "Transaction added"});
+    console.log("Log: transaction added\n", "Log: Adding beverages into transactionbeverages table...");
+    if (results.rows.length === 0) {
+      console.log(`Log: Error while inserting transactionData into transactions table.`);
+      res.status(500).json({info: `Error while inserting transactionData into transactions table.`});
+      return;
+    }
+    else {
+      transactionData.beverages.forEach((beverage) => {
+        client.query(`
+          INSERT INTO transactionbeverages (transaction_id, beverage_id)
+          SELECT $1, id
+          FROM beverages
+          WHERE name=$2
+        `, [results.rows[0].id, beverage], (inner_query_err, inner_query_results) => {
+          if (inner_query_err) {
+            console.log(`Log: Error occurred while inserting beverage: ${beverage}, into transactionbeverages table, Error: `, inner_query_err);
+            // returning a server error
+            res.status(500).json({info: `Error occurred while inserting beverage: ${beverage}, into transactionbeverages table.`});
+            return;
+          }
+        });
+      });
+      console.log(`Log: Added beverages: ${transactionData.beverages} into transactionbeverages table.`);
+      res.status(200).json({info: "Transaction added"});
+    }
   });
 };
 
@@ -465,6 +488,59 @@ const removeEmotionsTable = (req, res) => {
 
 
 
+// ----------- Beverage-Tags
+const createBeverageTagsTable = (req, res) => {
+  client.query(`
+    CREATE TABLE beveragetags (
+      beverage_id INT NOT NULL REFERENCES beverages(id),
+      tag_id INT NOT NULL REFERENCES tags(id),
+      PRIMARY KEY (beverage_id, tag_id)
+    )
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while beveragetags table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while creating beveragetags table.`});
+      return;
+    }
+    console.log(`Log: Created beveragetags table.`);
+    res.status(200).json({info: `Created beveragetags table.`});
+  });
+};
+
+const clearBeverageTagsTable = (req, res) => {
+  client.query(`
+    TRUNCATE beveragetags
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while clearing beveragetags table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while clearing beveragetags table.`});
+      return;
+    }
+    console.log(`Log: Cleared beveragetags table.`);
+    res.status(200).json({info: `Cleared beveragetags table.`});
+  });
+};
+
+const removeBeverageTagsTable = (req, res) => {
+  client.query(`
+    DROP TABLE beveragetags
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while removing beveragetags table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while removing beveragetags table.`});
+      return;
+    }
+    console.log(`Log: Removed beveragetags table.`);
+    res.status(200).json({info: `Removed beveragetags table.`});
+  });
+};
+
+
+
+
 // ----------- Transactions
 const createTransactionsTable = (req, res) => {
   client.query(`
@@ -476,8 +552,7 @@ const createTransactionsTable = (req, res) => {
       age INT,
       emotion VARCHAR(30),
       weather VARCHAR(30),
-      temperature FLOAT(1),
-      beverages TEXT []
+      temperature FLOAT(1)
     )
   `, [], (err, results) => {
     if (err) {
@@ -524,6 +599,73 @@ const removeTransactionsTable = (req, res) => {
 
 
 
+// ----------- Transaction-Beverages
+const createTransactionBeveragesTable = (req, res) => {
+  client.query(`
+    CREATE TABLE transactionbeverages (
+      transaction_id INT NOT NULL REFERENCES transactions(id),
+      beverage_id INT NOT NULL REFERENCES beverages(id),
+      PRIMARY KEY (transaction_id, beverage_id)
+    )
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while transactionbeverages table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while creating transactionbeverages table.`});
+      return;
+    }
+    console.log(`Log: Created transactionbeverages table.`);
+    res.status(200).json({info: `Created treansactionbeverages table.`});
+  });
+};
+
+const clearTransactionBeveragesTable = (req, res) => {
+  client.query(`
+    TRUNCATE transactionbeverages
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while clearing transactionbeverages table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while clearing transactionbeverages table.`});
+      return;
+    }
+    console.log(`Log: Cleared transactionbeverages table.`);
+    res.status(200).json({info: `Cleared transactionbeverages table.`});
+  });
+};
+
+const removeTransactionBeveragesTable = (req, res) => {
+  client.query(`
+    DROP TABLE transactionbeverages
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while removing transactionbeverages table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while removing transactionbeverages table.`});
+      return;
+    }
+    console.log(`Log: Removed transactionbeverages table.`);
+    res.status(200).json({info: `Removed transactionbeverages table.`});
+  });
+};
+
+const test = (req, res) => {
+  client.query(`
+    SELECT * FROM transactionbeverages
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while getting all rows in transactionbeverages table.`);
+      // returning server error
+      res.status(500).json({info: `Error while getting all rows in transactionbeverages table.`});
+    }
+    console.log(`Log: Rows: ${results.rows}`);
+    res.status(200).json({transactionbeverages: results.rows});
+  });
+};
+
+
+
+
 module.exports = {
   getBeverages,
   addBeverage,
@@ -553,8 +695,17 @@ module.exports = {
   createEmotionsTable,
   clearEmotionsTable,
   removeEmotionsTable,
+  
+  createBeverageTagsTable,
+  clearBeverageTagsTable,
+  removeBeverageTagsTable,
 
   createTransactionsTable,
   clearTransactionsTable,
-  removeTransactionsTable
+  removeTransactionsTable,
+
+  createTransactionBeveragesTable,
+  clearTransactionBeveragesTable,
+  removeTransactionBeveragesTable,
+  test,
 };

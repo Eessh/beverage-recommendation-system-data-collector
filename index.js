@@ -10,21 +10,76 @@ const port = process.env.PORT || 5000;
 
 // const db = require("./LocalDBQueries.js");
 const {
+  getBeverages,
+  addBeverage,
+  removeBeverage,
+  
+  getTags,
+  addTag,
+  removeTag,
+
+  getEmotions,
+  addEmotion,
+  removeEmotion,
+
   getTransactions,
   addTransaction,
-  clearTransations,
-  getMostBoughtBeverage
+
+  getMostBoughtBeverage,
+  
+  createBeveragesTable,
+  clearBeveragesTable,
+  removeBeveragesTable,
+  
+  createTagsTable,
+  clearTagsTable,
+  removeTagsTable,
+
+  createEmotionsTable,
+  clearEmotionsTable,
+  removeEmotionsTable,
+
+  createTransactionsTable,
+  clearTransactionsTable,
+  removeTransactionsTable
 } = require("./HerokuDBQueries");
 
 app.get("/", (req, res) => {
   res.status(200).json({info: "Server Running"});
 });
 
+app.get("/beverages", getBeverages);
+app.post("/beverages", addBeverage);
+app.delete("/beverages", removeBeverage);
+
+app.get("/tags", getTags);
+app.post("/tags", addTag);
+app.delete("/tags", removeTag);
+
+app.get("/emotions", getEmotions);
+app.post("/emotions", addEmotion);
+app.delete("/emotions", removeEmotion);
+
 app.get("/transactions", getTransactions);
 app.post("/transactions", addTransaction);
-app.delete("/transactions", clearTransations);
 
 app.get("/mostBought", getMostBoughtBeverage);
+
+app.post("/beveragesTable", createBeveragesTable);
+app.patch("/beveragesTable", clearBeveragesTable);
+app.delete("/beveragesTable", removeBeveragesTable);
+
+app.post("/tagsTable", createTagsTable);
+app.patch("/tagsTable", clearTagsTable);
+app.delete("/tagsTable", removeTagsTable);
+
+app.post("/emotionsTable", createEmotionsTable);
+app.patch("/emotionsTable", clearEmotionsTable);
+app.delete("/emotionsTable", removeEmotionsTable);
+
+app.post("/transactionsTable", createTransactionsTable);
+app.patch("/transactionsTable", clearTransactionsTable);
+app.delete("/transactionsTable", removeTransactionsTable);
 
 // app.get("/users", db.getUsers);
 // app.get("/users/:id", db.getUserById);

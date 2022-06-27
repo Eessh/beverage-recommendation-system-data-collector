@@ -88,6 +88,70 @@ const removeBeverage = (req, res) => {
 
 
 
+// ----------- Tags
+const getTags = (req, res) => {
+  client.query(`
+    SELECT * FROM tags
+  `, [], (err, results) => {
+    if (err) {
+      console.log("Log: Error occurred while getting all tags: ", err);
+      // returning server error
+      res.status(500).json({info: "Error occurred while getting all tags"});
+      return;
+    }
+    console.log("Log: tags: ", results.rows);
+    res.status(200).json({tags: results.rows});
+  });
+};
+
+const addTag = (req, res) => {
+  const tag = req.body.tag;
+  if (tag===undefined || tag===null) {
+    // returning a client error
+    res.status(400).json({info: "Request should contain tag field in body!!!"});
+    return;
+  }
+  
+  client.query(`
+    INSERT INTO tags (name) VALUES ($1)
+  `, [tag], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while inserting tag: ${tag}, Erorr: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while inserting tag: ${tag}`});
+      return;
+    }
+    console.log(`Log: Added tag: ${tag} into tags table.`);
+    res.status(200).json({info: `Added tag: ${tag} into tags table.`})
+  });
+};
+
+const removeTag = (req, res) => {
+  const tag = req.body.tag;
+  if (tag===undefined || tag===null) {
+    // returning a client error
+    res.status(400).json({info: "Request should contain tag field in body!!!"});
+    return;
+  }
+
+  client.query(`
+    DELETE FROM beverages
+    WHERE name=$1
+  `, [tag], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while deleting tag: ${tag}, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while deleting tag: ${tag}`});
+      return;
+    }
+    console.log(`Log: Deleted tag: ${tag} from tags table.`);
+    res.status(200).json({info: `Deleted tag: ${tag} from tags table.`});
+  });
+};
+
+
+
+
 // ----------- Emotions
 const getEmotions = (req, res) => {
   client.query(`
@@ -207,21 +271,6 @@ const addTransaction = (req, res) => {
   });
 };
 
-const clearTransations = (req, res) => {
-  client.query(`
-    TRUNCATE transactions
-  `, [], (err, results) => {
-    if (err) {
-      console.log("Log: Error while clearing transactions: ", err);
-      // returning a server error
-      res.status(500).json({info: "Error while clearing transactions"});
-      return;
-    }
-    console.log("Log: transactions cleared");
-    res.status(200).json({info: "Transactions cleared"});
-  });
-};
-
 const getMostBoughtBeverage = (req, res) => {
   client.query(`
     SELECT * FROM transactions
@@ -306,6 +355,58 @@ const removeBeveragesTable = (req, res) => {
     }
     console.log(`Log: Removed beverages table.`);
     res.status(200).json({info: `Removed beverages table.`});
+  });
+};
+
+
+
+
+// ----------- Tags
+const createTagsTable = (req, res) => {
+  client.query(`
+    CREATE TABLE tags (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(30)
+    )
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while creating tags table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Log: Error while creating tags table.`});
+      return;
+    }
+    console.log(`Log: Created tags table.`);
+    res.status(200).json({info: `Log: Created tags table.`});
+  });
+};
+
+const clearTagsTable = (req, res) => {
+  client.query(`
+    TRUNCATE tags
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while clearing tags table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while clearing tags table.`});
+      return;
+    }
+    console.log(`Log: Cleared tags table.`);
+    res.status(200).json({info: `Cleared tags table.`});
+  });
+};
+
+const removeTagsTable = (req, res) => {
+  client.query(`
+    DROP TABLE tags
+  `, [], (err, resuts) => {
+    if (err) {
+      console.log(`Log: Error while removing tags table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while removing tags table`});
+      return;
+    }
+    console.log(`Log: Removed tags table.`);
+    res.status(200).json({info: `Removed tags table.`});
   });
 };
 
@@ -424,8 +525,36 @@ const removeTransactionsTable = (req, res) => {
 
 
 module.exports = {
+  getBeverages,
+  addBeverage,
+  removeBeverage,
+  
+  getTags,
+  addTag,
+  removeTag,
+
+  getEmotions,
+  addEmotion,
+  removeEmotion,
+
   getTransactions,
   addTransaction,
-  clearTransations,
-  getMostBoughtBeverage
+
+  getMostBoughtBeverage,
+  
+  createBeveragesTable,
+  clearBeveragesTable,
+  removeBeveragesTable,
+  
+  createTagsTable,
+  clearTagsTable,
+  removeTagsTable,
+
+  createEmotionsTable,
+  clearEmotionsTable,
+  removeEmotionsTable,
+
+  createTransactionsTable,
+  clearTransactionsTable,
+  removeTransactionsTable
 };

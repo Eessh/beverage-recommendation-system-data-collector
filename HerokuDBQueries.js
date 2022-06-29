@@ -667,6 +667,57 @@ const test = (req, res) => {
 
 
 
+// ----------- Transaction-Recommended-Beverages
+const createTransactionRecommendedBeveragesTable = (req, res) => {
+  client.query(`
+    CREATE TABLE transactionrecommendedbeverages (
+      transaction_id INT NOT NULL REFERENCES transactions(id),
+      beverage_id INT NOT NULL REFERENCES beverages(id),
+      PRIMARY KEY (transaction_id, beverage_id)
+    )
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while creating transactionrecommendedbeverages table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while creating transactionrecommendedbeverages table.`});
+    }
+    console.log(`Log: Created transactionrecommendedbeverages table.`);
+    res.status(200).json({info: `Created transactionrecommendedbeverages table.`});
+  });
+};
+
+const clearTransactionRecommendedBeveragesTable = (req, res) => {
+  client.query(`
+    TRUNCATE transactionrecommendedbeverages
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while truncating transactionrecommendedbeverages table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while truncating transactionrecommendedbeverages table.`});
+    }
+    console.log(`Log: Cleared transactionrecommendedbeverages table.`);
+    res.status(200).json({info: `Cleared transactionrecommendedbeverages table.`});
+  });
+};
+
+const removeTransactionRecommendedBeveragesTable = (req, res) => {
+  client.query(`
+    DROP TABLE transactionrecommendedbeverages
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while removing transactionrecommendedbeverages table, Error: `, err);
+      // returning server error
+      res.status(500).json({info: `Error while removing transactionrecommendedbeverages table.`});
+      return;
+    }
+    console.log(`Log: Removed transactionrecommendedbeverages table.`);
+    res.status(200).json({info: `Removed transactionrecommendedbeverages table.`});
+  });
+};
+
+
+
+
 module.exports = {
   getBeverages,
   addBeverage,
@@ -709,4 +760,8 @@ module.exports = {
   clearTransactionBeveragesTable,
   removeTransactionBeveragesTable,
   test,
+
+  createTransactionRecommendedBeveragesTable,
+  clearTransactionRecommendedBeveragesTable,
+  removeTransactionRecommendedBeveragesTable
 };

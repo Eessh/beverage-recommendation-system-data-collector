@@ -23,7 +23,14 @@ const {
   removeEmotion,
 
   getTransactions,
+  getTransactionsIds,
+  getTransactionById,
+  getFullTransactionById,
   addTransaction,
+  getTransactionBeverages,
+  getTransactionBeveragesById,
+  getTransactionRecommendedBeverages,
+  getTransactionRecommendedBeveragesById,
 
   getMostBoughtBeverage,
   
@@ -69,8 +76,17 @@ app.get("/emotions", getEmotions);
 app.post("/emotions", addEmotion);
 app.delete("/emotions", removeEmotion);
 
+app.get("/transactions/id/full", getFullTransactionById);
+app.get("/transactions/id", getTransactionById);
+app.get("/transactions/ids", getTransactionsIds);
 app.get("/transactions", getTransactions);
 app.post("/transactions", addTransaction);
+
+app.get("/transactionbeverages/id", getTransactionBeveragesById);
+app.get("/transactionbeverages", getTransactionBeverages);
+
+app.get("/transactionrecommendedbeverages/id", getTransactionRecommendedBeveragesById);
+app.get("/transactionrecommendedbeverages", getTransactionRecommendedBeverages);
 
 app.get("/mostBought", getMostBoughtBeverage);
 

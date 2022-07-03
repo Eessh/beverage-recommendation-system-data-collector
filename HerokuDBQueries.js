@@ -330,6 +330,144 @@ const getTransactions = async (req, res) => {
   }
 };
 
+const getTransactionsIds = async (req, res) => {
+  if (!await tableExists("transactions")) {
+    console.log("Log: Table: transactions has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactions has not been created yet."});
+    return;
+  }
+  client.query(`
+    SELECT id
+    FROM transactions
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error occurred while getting all id's of transactions, Error: `, err);
+      // returning a server error
+      res.status(500).json({info: `Error occurred while getting all id's of transactions.`});
+      return;
+    }
+    res.status(200).json({ids: results.rows});
+  });
+};
+
+const getTransactionById = async (req, res) => {
+  if (!await tableExists("transactions")) {
+    console.log("Log: Table: transactions has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactions has not been created yet."});
+    return;
+  }
+  const transactionId = req.body.transactionId;
+  if (transactionId===undefined || transactionId===null) {
+    // returning a client error
+    res.status(400).json({info: "Request should contain a transactionId field in body."});
+    return;
+  }
+  else {
+    client.query(`
+      SELECT *
+      FROM transactions
+      WHERE id=$1
+    `, [transactionId], (err, results) => {
+      if (err) {
+        console.log(`Log: Error occurred while getting transaction, transaction_id: ${transactionId}, Error: `, err)
+        // returning a server error
+        res.status(500).json({info: `Error occurred while getting transaction, transaction_id: ${transactionId}.`});
+        return;
+      }
+      console.log("Log: transaction: ", results.rows);
+      res.status(200).json({transactions: results.rows});
+    });
+  }
+};
+
+const getFullTransactionById = async () => {
+  if (!await tableExists("beverages")) {
+    console.log("Log: Table: beverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: beverages has not been created yet."});
+    return;
+  }
+  if (!await tableExists("transactions")) {
+    console.log("Log: Table: transactions has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactions has not been created yet."});
+    return;
+  }
+  if (!await tableExists("transactionbeverages")) {
+    console.log("Log: Table: transactionbeverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactionbeverages has not been created yet."});
+    return;
+  }
+  if (!await tableExists("transactionrecommendedbeverages")) {
+    console.log("Log: Table: transactionrecommendedbeverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactionrecommendedbeverages has not been created yet."});
+    return;
+  }
+  const transactionId = req.body.transactionId;
+  let transactionData;
+  if (transactionId===undefined || transactionId===null) {
+    // returning a client error
+    res.status(400).json({info: "Request should contain a transactionId field in body."});
+    return;
+  }
+  else {
+    client.query(`
+      SELECT *
+      FROM transactions
+      WHERE id=$1
+    `, [transactionId], (err, results) => {
+      if (err) {
+        console.log(`Log: Error occurred while getting transaction, transaction_id: ${transactionId}, Error: `, err);
+        // returning a server error
+        res.status(500).json({info: `Error occurred while getting transaction, transaction_id: ${transactionId}.`});
+        return;
+      }
+      transactionData = results.rows[0];
+      client.query(`
+        SELECT name
+        FROM beverages
+        WHERE id IN (
+          SELECT beverage_id
+          FROM transactionbeverages
+          WHERE transaction_id=$1
+        )
+      `, [transactionId], (err, results) => {
+        if (err) {
+          console.log(`Log: Error occurred while getting transaction beverages, transaction_id: ${transactionId}, Error: `, err);
+          // returning a server error
+          res.status(500).json({info: `Error occurred while getting transaction beverages, transaction_id: ${transactionId}.`});
+          return;
+        }
+        transactionData.beverages = [];
+        results.rows.forEach(beverage => transactionData.beverages.push(beverage));
+        client.query(`
+          SELECT name
+          FROM beverages
+          WHERE id IN (
+            SELECT beverage_id
+            FROM transactionrecommendedbeverages
+            WHERE transaction_id=$1
+          )
+        `, [transactionId], (err, results) => {
+          if (err) {
+            console.log(`Log: Error occurred while getting transaction recommended beverages, transaction_id: ${transactionData}, Error: `, err);
+            // returning a server error
+            res.status(500).json({info: `Error occurred while getting transaction recommended beverages, transaction_id: ${transactionData}.`});
+            return;
+          }
+          transactionData.recommendedBeverages = [];
+          results.rows.forEach(recommendedBeverage => transactionData.recommendedBeverages.push(recommendedBeverage));
+          res.send(200).json({transactionData: transactionData});
+        });
+      });
+    });
+  }
+};
+
 const addTransaction = async (req, res) => {
   if (!await tableExists("transactions")) {
     console.log("Log: Table: transactions has not been created yet.");
@@ -437,6 +575,132 @@ const addTransaction = async (req, res) => {
       }
     });
   }
+};
+
+
+
+
+// ----------- Transaction Beverages
+const getTransactionBeverages = async (req, res) => {
+  if (!await tableExists("transactionbeverages")) {
+    console.log("Log: Table: transactionbeverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactionbeverages has not been created yet."});
+    return;
+  }
+  client.query(`
+    SELECT *
+    FROM transactionbeverages
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while getting transactions beverages, Error: `, err);
+      // returning a server error;
+      res.status(500).json({info: `Error while getting transaction beverages.`});
+      return;
+    }
+    res.status(200).json(results.rows);
+  });
+};
+
+const getTransactionBeveragesById = async (req, res) => {
+  if (!await tableExists("beverages")) {
+    console.log("Log: Table: beverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: beverages has not been created yet."});
+    return;
+  }
+  if (!await tableExists("transactionbeverages")) {
+    console.log("Log: Table: transactionbeverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactionbeverages has not been created yet."});
+    return;
+  }
+  const transactionId = req.body.transactionId;
+  if (transactionId===undefined || transactionId===null) {
+    // returning a client error
+    res.status(400).json({info: "Request should contain a transactionId field in body."});
+    return;
+  }
+  client.query(`
+    SELECT name
+    FROM beverages
+    WHERE id IN (
+      SELECT beverage_id
+      FROM transactionbeverages
+      WHERE transaction_id=$1
+    )
+  `, [transactionId], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while getting transaction beverages, transaction_id: ${transactionId}, Error: `, err);
+      // returning a server error;
+      res.status(500).json({info: `Error while getting transaction beverages, transaction_id: ${transactionId}.`});
+      return;
+    }
+    res.status(200).json(results.rows);
+  });
+};
+
+
+
+
+// ----------- Transaction Recommended Beverages
+const getTransactionRecommendedBeverages = async (req, res) => {
+  if (!await tableExists("transactionrecommendedbeverages")) {
+    console.log("Log: Table: transactionrecommendedbeverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactionrecommendedbeverages has not been created yet."});
+    return;
+  }
+  client.query(`
+    SELECT *
+    FROM transactionrecommendedbeverages
+  `, [], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while getting transactions recommended beverages, Error: `, err);
+      // returning a server error;
+      res.status(500).json({info: `Error while getting transactions recommended beverages.`});
+      return;
+    }
+    res.status(200).json(results.rows);
+  });
+};
+
+const getTransactionRecommendedBeveragesById = async (req, res) => {
+  if (!await tableExists("beverages")) {
+    console.log("Log: Table: beverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: beverages has not been created yet."});
+    return;
+  }
+  if (!await tableExists("transactionrecommendedbeverages")) {
+    console.log("Log: Table: transactionrecommendedbeverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: transactionrecommendedbeverages has not been created yet."});
+    return;
+  }
+  const transactionId = req.body.transactionId;
+  if (transactionId===undefined || transactionId===null) {
+    // returning a client error
+    res.status(400).json({info: "Request should contain a transactionId field in body."});
+    return;
+  }
+  client.query(`
+    SELECT name
+    FROM beverages
+    WHERE id IN (
+      SELECT beverage_id
+      FROM transactionrecommendedbeverages
+      WHERE transaction_id=$1
+    )
+  `, [transactionId], (err, results) => {
+    if (err) {
+      console.log(`Log: Error while getting transaction recommended beverages, transaction_id: ${transactionId}, Error: `, err);
+      // returning a server error;
+      res.status(500).json({info: `Error while getting transaction recommended beverages, transaction_id: ${transactionId}.`});
+      return;
+    }
+    res.status(200).json(results.rows);
+  });
 };
 
 
@@ -1062,7 +1326,14 @@ module.exports = {
   removeEmotion,
 
   getTransactions,
+  getTransactionsIds,
+  getTransactionById,
+  getFullTransactionById,
   addTransaction,
+  getTransactionBeverages,
+  getTransactionBeveragesById,
+  getTransactionRecommendedBeverages,
+  getTransactionRecommendedBeveragesById,
 
   getMostBoughtBeverage,
   

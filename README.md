@@ -2,6 +2,8 @@
 
 A simple api for a database, which stores the transactions made in the app: [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/)
 
+When a transaction is made, it stores the `time, season, gender, age, emotion_id, weather, temperature` fields in `transactions table`, then it stores beverages in `transactionbeverages table`, and recommended beverages in `transactionrecommendedbeverages table`.
+
 
 ## Api
 ### Beverage related: `/beverages`
@@ -9,25 +11,26 @@ A simple api for a database, which stores the transactions made in the app: [Bev
 - `POST` - adds beverage(`request.body.beverage`) into `beverages table`
 - `DELETE` - removes the beverage(`request.body.beverage`) from `beverages table`
 
-### Transactions related: `/transactions`
-- `GET` - returns all transactions in `transactions table` (Edit: Should actually return beverages bought in that transaction too, will implement it :)
-- `POST` - adds transaction(`request.body.transaction`) into `transactions table`, adds beverages(`request.body.transaction.beverages`) into `transactionbeverages table`. See the function which does this thing [over here](https://github.com/Eessh/beverage-recommendation-system-data-collector/blob/aee9a24ee4c597b325ef8bd35dbef28042beb2ca/HerokuDBQueries.js#L232).
-
-### Tags related: `/tags`
-- `GET` - returns all tags in `tags table`
-- `POST` - adds tag(`request.body.tag`) into `tags table`
-- `DELETE` - removes the tag(`request.body.tag`) from `tags table`
-
 ### Emotions related: `/emotions`
 - `GET` - returns all emotions in `emotions table`
 - `POST` - adds emotion(`request.body.emotion`) into `emotion table`
 - `DELETE` - removes the emotion(`request.body.emotion`) from `emotion table`
+
+### Transactions related: `/transactions`
+- `GET` - returns all transactions in `transactions table` (Edit: Should actually return beverages bought in that transaction too, will implement it :)
+- `POST` - adds transaction(`request.body.transaction`) into `transactions table`, adds beverages(`request.body.transaction.beverages`) into `transactionbeverages table`. See the function which does this thing [over here](https://github.com/Eessh/beverage-recommendation-system-data-collector/blob/aee9a24ee4c597b325ef8bd35dbef28042beb2ca/HerokuDBQueries.js#L232).
+
 
 ## Api - DANGER ZONE
 ### Beverages Table related: `/beveragesTable`
 - `POST` - creates `beverages table`
 - `PATCH` - clears `beverages table`
 - `DELETE` - removes `beverages table` from database
+
+### Emotions Table related: `/emotionsTable`
+- `POST` - creates `emotions table`
+- `PATCH` - clears `emotions table`
+- `DELETE` - removes `emotions table` from database
 
 ### Transactions Table related: `/transactionsTable`
 - `POST` - creates `transactions table`
@@ -39,12 +42,24 @@ A simple api for a database, which stores the transactions made in the app: [Bev
 - `PATCH` - clears `transactionbeverages table`
 - `DELETE` - removes `transactionbeverages table` from database
 
+### TransactionRecommendedBeverages Table related: `/transactionrecommendedbeveragesTable`
+- `POST` - creates `transactionrecommendedbeverages table`
+- `PATCH` - clears `transactionrecommendedbeverages table`
+- `DELETE` - removes `transactionrecommendedbeverages table` from database
+
 ## Database Schema
 > Beverages Table
 ```
   beverages (
     id SERIAL PRIMARY KEY,
     name VARCHAR(30)
+  )
+```
+> Emotions Table
+```
+  emotions (
+    id SERIAL PRIMARY KEY,
+    name VARHCAR(30)
   )
 ```
 > Transaction Table
@@ -68,13 +83,15 @@ A simple api for a database, which stores the transactions made in the app: [Bev
     PRIMARY KEY (transaction_id, beverage_id)
   )
 ```
-> Emotions Table
+> TransactionRecommendedBeverages Table
 ```
-  emotions (
-    id SERIAL PRIMARY KEY,
-    name VARHCAR(30)
+  transactionrecommendedbeverages (
+    transaction_id INT NOT NULL REFERENCES transactions(id),
+    beverage_id INT NOT NULL REFERENCES beverages(id),
+    PRIMARY KEY (transaction_id, beverage_id)
   )
 ```
+### The following tables currently have no use:
 > Tags Table
 ```
   tags (

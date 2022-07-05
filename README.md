@@ -17,8 +17,26 @@ When a transaction is made, it stores the `time, season, gender, age, emotion_id
 - `DELETE` - removes the emotion(`request.body.emotion`) from `emotion table`
 
 ### Transactions related: `/transactions`
-- `GET` - returns all transactions in `transactions table` (Edit: Should actually return beverages bought in that transaction too, will implement it :)
+- `GET` - returns all transactions in `transactions table`
+  - `/transactions/ids` - returns all transactions ids
+  - `/transactions/id` - returns a transaction with the specified id(`req.body.id`)
+  - `/transactions/id/full` - returns a full transaction(with beverages, recommended_beverages) with specified id (`req.body.id`)
 - `POST` - adds transaction(`request.body.transaction`) into `transactions table`, adds beverages(`request.body.transaction.beverages`) into `transactionbeverages table`. See the function which does this thing [over here](https://github.com/Eessh/beverage-recommendation-system-data-collector/blob/aee9a24ee4c597b325ef8bd35dbef28042beb2ca/HerokuDBQueries.js#L232).
+
+### TransactionBeverages related: `/transactionbeverages`
+- `GET` - returns all rows in `transactionbeverages table`
+  - `/transactionbeverages/id` - returns the rows with the specified transaction_id(`req.body.transaction_id`)
+
+### TransactionRecommendedBeverages related: `/transactionrecommendedbeverages`
+- `GET` - returns all rows in `transactionrecommendedbeverages table`
+  - `/transactionrecommendedbeverages/id` - returns the rows with the specified transaction_id(`req.body.transaction_id`)
+
+### Settings related: `/settings`
+- `GET` - returns all settings(`res.body will be of form: {emotion: "some emotion", tag: "seom beverage tag", state: "0 or 1"}`)
+  - `/settings/emotionAndTag` - returns the state(`res.body.state`) of that setting corresponding to the specified emotion and tag
+- `POST` - adds a setting to the settings table
+- `PATCH` - updates a setting
+- `DELETE` - deletes a setting
 
 
 ## Api - DANGER ZONE

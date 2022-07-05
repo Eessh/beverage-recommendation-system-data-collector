@@ -32,6 +32,12 @@ const {
   getTransactionRecommendedBeverages,
   getTransactionRecommendedBeveragesById,
 
+  getSettings,
+  getSettingByEmotionAndTag,
+  addSetting,
+  updateSetting,
+  removeSetting,
+
   getMostBoughtBeverage,
   
   createBeveragesTable,
@@ -45,6 +51,10 @@ const {
   createEmotionsTable,
   clearEmotionsTable,
   removeEmotionsTable,
+  
+  createBeverageTagsTable,
+  clearBeverageTagsTable,
+  removeBeverageTagsTable,
 
   createTransactionsTable,
   clearTransactionsTable,
@@ -57,7 +67,12 @@ const {
 
   createTransactionRecommendedBeveragesTable,
   clearTransactionRecommendedBeveragesTable,
-  removeTransactionRecommendedBeveragesTable
+  removeTransactionRecommendedBeveragesTable,
+  test2,
+
+  createSettingsTable,
+  clearSettingsTable,
+  removeSettingsTable,
 } = require("./HerokuDBQueries");
 
 app.get("/", (req, res) => {
@@ -88,6 +103,12 @@ app.get("/transactionbeverages", getTransactionBeverages);
 app.get("/transactionrecommendedbeverages/id", getTransactionRecommendedBeveragesById);
 app.get("/transactionrecommendedbeverages", getTransactionRecommendedBeverages);
 
+app.get("/settings/emotionAndTag", getSettingByEmotionAndTag);
+app.get("/settings", getSettings);
+app.post("/settings", addSetting);
+app.patch("/settings", updateSetting);
+app.delete("/settings", removeSetting);
+
 app.get("/mostBought", getMostBoughtBeverage);
 
 app.post("/beveragesTable", createBeveragesTable);
@@ -114,6 +135,11 @@ app.get("/transactionbeveragesTable", test);
 app.post("/transactionrecommendedbeveragesTable", createTransactionRecommendedBeveragesTable);
 app.patch("/transactionrecommendedbeveragesTable", clearTransactionRecommendedBeveragesTable);
 app.delete("/transactionrecommendedbeveragesTable", removeTransactionRecommendedBeveragesTable);
+app.get("/transactionrecommendedbeveragesTable", test2);
+
+app.post("/settingsTable", createSettingsTable);
+app.patch("/settingsTable", clearSettingsTable);
+app.delete("/settingsTable", removeSettingsTable);
 
 // app.get("/users", db.getUsers);
 // app.get("/users/:id", db.getUserById);

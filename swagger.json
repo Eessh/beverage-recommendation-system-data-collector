@@ -1,0 +1,566 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "A simple api which collects information of transactions made in [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/tree/recommendation_using_only_emotion).",
+    "version": "1.0.0",
+    "title": "Data Collector API",
+    "contact": {
+      "email": "eesshkumarjagana@gmail.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "beverages",
+      "description": "Everything about beverages."
+    },
+    {
+      "name": "emotions",
+      "description": "Everything about emotions."
+    },
+    {
+      "name": "transactions",
+      "description": "Everything about transactions."
+    }
+  ],
+  "paths": {
+    "/beverages": {
+      "get": {
+        "tags": ["beverages"],
+        "summary" : "Get all beverages",
+        "description": "Returns an array of beverages from the `beverages table` in DB.",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all beverages.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Beverage"
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching beverages.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: beverages has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["beverages"],
+        "summary" : "Add a beverage",
+        "description": "Add a beverage",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Beverage Object",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "beverage": {
+                  "type": "string",
+                  "example": "CocaCola"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully added the beverage.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Added beverage: CocaCola into beverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error, invalid request syntax.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Request should contain beverage field in body."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while adding the beverage.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: beverages has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["beverages"],
+        "summary": "Delete a beverage.",
+        "description": "Delete a beverage",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Beverage Id",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "beverage": {
+                  "type": "string",
+                  "example": "CocaCola"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the beverage.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Deleted beverage: CocaCola from beverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error, invalid request syntax.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Request should contain beverage field in body."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while adding the beverage.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: beverages has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emotions": {
+      "get": {
+        "tags": ["emotions"],
+        "summary" : "Get all emotions.",
+        "description": "Returns an array of emotions from the `emotions table` in DB.",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all emotions.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Emotion"
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching emotions.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["emotions"],
+        "summary" : "Add an emotion.",
+        "description": "Add an emotion.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Emotion Object",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "emotion": {
+                  "type": "string",
+                  "example": "happy"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully added the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Added emotion: happy into emotion table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error, invalid request syntax.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Request should contain emotion field in body."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while adding the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["emotions"],
+        "summary": "Delete an emotion.",
+        "description": "Delete an emotion.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Emotion name",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "emotion": {
+                  "type": "string",
+                  "example": "happy"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Deleted emotion: happy from emotions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error, invalid request syntax.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Request should contain emotion field in body."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while adding the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "tags": ["transactions"],
+        "summary" : "Get all transactions (not a full transaction).",
+        "description": "Returns an array of transactions from the `transactions table` in DB. This response doesn't include beverages, recommended beverages for each transaction.",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all transactions.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transactions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Transaction"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching transactions.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactions has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["transactions"],
+        "summary" : "Add a transaction.",
+        "description": "Add a transaction.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Emotion Object",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transaction": {
+                  "type": "object"
+                  
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully added the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Added emotion: happy into emotion table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error, invalid request syntax.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Request should contain emotion field in body."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while adding the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["transactions"],
+        "summary": "Delete an emotion.",
+        "description": "Delete an emotion.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Emotion name",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "emotion": {
+                  "type": "string",
+                  "example": "happy"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Deleted emotion: happy from emotions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error, invalid request syntax.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Request should contain emotion field in body."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while adding the emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "Beverage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "CocaCola"
+        }
+      }
+    },
+    "Emotion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "name": {
+          "type": "string",
+          "example": "happy"
+        }
+      }
+    },
+    "Transaction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "time": {
+          "type": "string",
+          "example": "2022-07-04T23:44:31.035Z"
+        },
+        "season": {
+          "type": "string",
+          "example": "rainy"
+        },
+        "gender": {
+          "type": "string",
+          "example": "male"
+        },
+        "age": {
+          "type": "number",
+          "example": 20
+        },
+        "emotion_id": {
+          "type": "number",
+          "example": 1
+        },
+        "weather": {
+          "type": "string",
+          "example": "Clear Sky"
+        },
+        "temperature": {
+          "type": "number",
+          "example": 24
+        }
+      }
+    }
+  }
+}

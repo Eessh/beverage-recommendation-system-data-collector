@@ -1,10 +1,15 @@
 const express = require("express");
+const fs = require("fs");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const swaggerUI = require("swagger-ui-express");
 
 const app = express();
+const swaggerDoc = require("./swagger.json");
+const customCss = fs.readFileSync((process.cwd()+"/swagger.css"), 'utf8');
 app.use(cors());
 app.use(express.json());
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc, {customCss}));
 dotenv.config();
 const port = process.env.PORT || 5000;
 

@@ -61,7 +61,7 @@ const getBeverages = async (req, res) => {
       if (err) {
         console.log("Log: Error occurred while getting all beverages: ", err);
         // returning server error
-        res.status(500).json({info: "Error occurred while getting all beverages"});
+        res.status(500).json({info: "Error occurred while getting all beverages."});
         return;
       }
       console.log("Log: beverages: ", results.rows);
@@ -81,7 +81,7 @@ const addBeverage = async (req, res) => {
     const beverage = req.body.beverage;
     if (beverage===undefined || beverage===null) {
       // returning a client error
-      res.status(400).json({info: "Request should contain beverage field in body!!!"});
+      res.status(400).json({info: "Request should contain beverage field in body."});
       return;
     }
     

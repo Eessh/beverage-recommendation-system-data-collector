@@ -1,0 +1,16 @@
+body {
+  background-color: #fdf6e3 !important;
+}
+
+.topbar {
+  display: none !important;
+}
+
+.opblock-summary-control,
+.models-control,
+.model-box-control {
+  outline: none !important;
+  border: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}

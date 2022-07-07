@@ -288,8 +288,13 @@ const getTransactionById = async (req, res) => {
         res.status(500).json({info: `Error occurred while getting transaction, transaction_id: ${transactionId}.`});
         return;
       }
-      console.log("Log: transaction: ", results.rows);
-      res.status(200).json({transactions: results.rows});
+      if (results.rows.length < 1) {
+        console.log("Log: Cannot find a transaction with id: ", transactionId);
+        res.status(400).json({info: `Cannot find a transaction with id: ${transactionId}.`});
+        return;
+      }
+      console.log("Log: transaction: ", results.rows[0]);
+      res.status(200).json({transaction: results.rows[0]});
     });
   }
 };
@@ -1227,7 +1232,7 @@ const createBeveragesTable = async (req, res) => {
         return;
       }
       console.log(`Log: Created beverages table.`);
-      res.status(200).json({info: `Log: Created beverages table.`});
+      res.status(200).json({info: `Created beverages table.`});
     });
   }
 };

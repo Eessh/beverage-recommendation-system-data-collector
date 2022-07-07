@@ -10,22 +10,54 @@
   },
   "tags": [
     {
-      "name": "beverages",
+      "name": "Beverages",
       "description": "Everything about beverages."
     },
     {
-      "name": "emotions",
+      "name": "Emotions",
       "description": "Everything about emotions."
     },
     {
-      "name": "transactions",
+      "name": "Transactions",
       "description": "Everything about transactions."
+    },
+    {
+      "name": "Transaction Beverages",
+      "description": "Everything about beverages in transactions."
+    },
+    {
+      "name": "Transaction Recommended Beverages",
+      "description": "Everything about recommended beverages in transactions."
+    },
+    {
+      "name": "DANGER ZONE",
+      "description": "Creating, Clearing and Removing tables form database."
+    },
+    {
+      "name": "Beverages Table",
+      "description": "Everyting about beverages table."
+    },
+    {
+      "name": "Emotions Table",
+      "description": "Everything about emotions table."
+    },
+    {
+      "name": "Transactions Table",
+      "description": "Everything about transactions table."
+    },
+    {
+      "name": "Transaction Beverages Table",
+      "description": "Everything about transactionbeverages table."
+    },
+    {
+      "name": "Transaction Recommended Beverages Table",
+      "description": "Everything about transactionrecommendedbeverages table."
     }
   ],
   "paths": {
     "/beverages": {
       "get": {
-        "tags": ["beverages"],
+        "tags": ["Beverages"],
         "summary" : "Get all beverages",
         "description": "Returns an array of beverages from the `beverages table` in DB.",
         "produces": ["application/json"],
@@ -34,9 +66,14 @@
           "200": {
             "description": "Successfully fetched all beverages.",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Beverage"
+              "type": "object",
+              "properties": {
+                "beverages": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Beverage"
+                  }
+                }
               }
             }
           },
@@ -55,7 +92,7 @@
         }
       },
       "post": {
-        "tags": ["beverages"],
+        "tags": ["Beverages"],
         "summary" : "Add a beverage",
         "description": "Add a beverage",
         "consumes": ["application/json"],
@@ -117,7 +154,7 @@
         }
       },
       "delete": {
-        "tags": ["beverages"],
+        "tags": ["Beverages"],
         "summary": "Delete a beverage.",
         "description": "Delete a beverage",
         "consumes": ["application/json"],
@@ -181,7 +218,7 @@
     },
     "/emotions": {
       "get": {
-        "tags": ["emotions"],
+        "tags": ["Emotions"],
         "summary" : "Get all emotions.",
         "description": "Returns an array of emotions from the `emotions table` in DB.",
         "produces": ["application/json"],
@@ -190,9 +227,14 @@
           "200": {
             "description": "Successfully fetched all emotions.",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Emotion"
+              "type": "object",
+              "properties": {
+                "emotions": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Emotion"
+                  }
+                }
               }
             }
           },
@@ -211,7 +253,7 @@
         }
       },
       "post": {
-        "tags": ["emotions"],
+        "tags": ["Emotions"],
         "summary" : "Add an emotion.",
         "description": "Add an emotion.",
         "consumes": ["application/json"],
@@ -273,7 +315,7 @@
         }
       },
       "delete": {
-        "tags": ["emotions"],
+        "tags": ["Emotions"],
         "summary": "Delete an emotion.",
         "description": "Delete an emotion.",
         "consumes": ["application/json"],
@@ -337,7 +379,7 @@
     },
     "/transactions": {
       "get": {
-        "tags": ["transactions"],
+        "tags": ["Transactions"],
         "summary" : "Get all transactions (not a full transaction).",
         "description": "Returns an array of transactions from the `transactions table` in DB. This response doesn't include beverages, recommended beverages for each transaction.",
         "produces": ["application/json"],
@@ -372,7 +414,7 @@
         }
       },
       "post": {
-        "tags": ["transactions"],
+        "tags": ["Transactions"],
         "summary" : "Add a transaction.",
         "description": "Add a transaction.",
         "consumes": ["application/json"],
@@ -387,8 +429,7 @@
               "type": "object",
               "properties": {
                 "transaction": {
-                  "type": "object"
-                  
+                  "$ref": "#/definitions/AddTransactionSchema"
                 }
               }
             }
@@ -396,13 +437,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully added the emotion.",
+            "description": "Successfully added the transaction.",
             "schema": {
               "type": "object",
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Added emotion: happy into emotion table."
+                  "example": "Added transaction."
                 }
               }
             }
@@ -414,19 +455,440 @@
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Request should contain emotion field in body."
+                  "example": "Request should contain transaction field in body."
                 }
               }
             }
           },
           "500": {
-            "description": "Server encountered an error while adding the emotion.",
+            "description": "Server encountered an error while adding the transaction.",
             "schema": {
               "type": "object",
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Table: emotions has not been created yet."
+                  "example": "Error while inserting transaction data into transactions table."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/ids": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Get all ids of transactions made.",
+        "description": "Returns an array of ids of all transactions from the `transactions table`.",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all ids of transactions.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Id"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching ids from `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactions has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/id": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Get a transaction by its id. (Not a full transaction)",
+        "description": "Returns the transaction corresponding to the id, in the `transactions table`.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Transaction id",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transactionId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully transaction with the given id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transaction": {
+                  "$ref": "#/definitions/Transaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cannot find a transaction with the given id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cannot find a transaction with the given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching transaction with given id from `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error occurred while getting transaction, transaction_id: 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/id/full": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Get a full transaction by its id.",
+        "description": "Returns the transaction corresponding to the id, in the `transactions table`, with beverages and recommended beverages.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Transaction id",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transactionId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully transaction with the given id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transaction": {
+                  "$ref": "#/definitions/FullTransaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Cannot find a transaction with the given id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cannot find a transaction with the given id."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching transaction with given id from `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error occurred while getting transaction, transaction_id: 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactionbeverages": {
+      "get": {
+        "tags": ["Transaction Beverages"],
+        "summary": "Beverages for each transaction.",
+        "description": "Returns the beverages for each transactions, from the `transactionbeverages table`.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all beverages for each transaction.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TransactionBeverage"
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching beverages from `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionbeverages has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactionbeverages/id": {
+      "get": {
+        "tags": ["Transaction Beverages"],
+        "summary": "Beverages for given transaction id.",
+        "description": "Returns the beverages for given transaction id, from the `transactionbeverages table`.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Transaction id",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transactionId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all beverages for given transaction id.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TransactionBeverage"
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching beverages from `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionbeverages has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactionrecommendedbeverages": {
+      "get": {
+        "tags": ["Transaction Recommended Beverages"],
+        "summary": "Recommended Beverages for each of transactions.",
+        "description": "Returns the recommended beverages for each of transactions, from the `transactionrecommendedbeverages table`.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all recommended beverages for each of transactions.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TransactionRecommendedBeverage"
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching recommended beverages from `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionrecommendedbeverages has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactionrecommendedbeverages/id": {
+      "get": {
+        "tags": ["Transaction Recommended Beverages"],
+        "summary": "Recommended Beverages for given transaction id.",
+        "description": "Returns the recommended beverages for given transaction id, from the `transactionrecommendedbeverages table`.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Transaction id",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "transactionId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched all recommended beverages for given transaction id.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TransactionRecommendedBeverage"
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching recommended beverages from `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionrecommendedbeverages has not been created yet."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/beveragesTable": {
+      "post": {
+        "tags": ["Beverages Table"],
+        "summary" : "Create beverages table",
+        "description": "Creates `beverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully created `beverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Created beverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: beverages already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while creating the beverages table.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while creating beverages table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Beverages Table"],
+        "summary" : "Clear beverages table",
+        "description": "Clears `beverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully cleared `beverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cleared beverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: beverages doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while clearing the beverages table.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while clearing beverages table."
                 }
               }
             }
@@ -434,61 +896,605 @@
         }
       },
       "delete": {
-        "tags": ["transactions"],
-        "summary": "Delete an emotion.",
-        "description": "Delete an emotion.",
-        "consumes": ["application/json"],
+        "tags": ["Beverages Table"],
+        "summary" : "Removes beverages table",
+        "description": "Removes `beverages table` in database.",
+        "consumes": [],
         "produces": ["application/json"],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Emotion name",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "emotion": {
-                  "type": "string",
-                  "example": "happy"
-                }
-              }
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Successfully deleted the emotion.",
+            "description": "Successfully removed `beverages table`.",
             "schema": {
               "type": "object",
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Deleted emotion: happy from emotions table."
+                  "example": "Removed beverages table."
                 }
               }
             }
           },
           "400": {
-            "description": "Client error, invalid request syntax.",
+            "description": "Client error.",
             "schema": {
               "type": "object",
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Request should contain emotion field in body."
+                  "example": "Table: beverages doesn't exists."
                 }
               }
             }
           },
           "500": {
-            "description": "Server encountered an error while adding the emotion.",
+            "description": "Server encountered an error while removing the beverages table.",
             "schema": {
               "type": "object",
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Table: emotions has not been created yet."
+                  "example": "Error while removing beverages table."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/emotionsTable": {
+      "post": {
+        "tags": ["Emotions Table"],
+        "summary" : "Create emotions table",
+        "description": "Creates `emotions table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully created `emotions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Created emotions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while creating the `emotions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while creating emotions table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Emotions Table"],
+        "summary" : "Clear emotions table",
+        "description": "Clears `emotions table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully cleared `emotions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cleared emotions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while clearing the emotions table.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while clearing emotions table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Emotions Table"],
+        "summary" : "Removes emotions table",
+        "description": "Removes `emotions table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully removed `emotions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Removed emotions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: emotions doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while removing the emotions table.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while removing emotions table."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactionsTable": {
+      "post": {
+        "tags": ["Transactions Table"],
+        "summary" : "Create transactions table",
+        "description": "Creates `transactions table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully created `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Created transactions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactions already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while creating the `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while creating transactions table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Transactions Table"],
+        "summary" : "Clear transactions table",
+        "description": "Clears `transactions table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully cleared `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cleared transactions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactions doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while clearing the `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while clearing transactions table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Transactions Table"],
+        "summary" : "Removes transactions table",
+        "description": "Removes `transactions table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully removed `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Removed transactions table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactions doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while removing the `transactions table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while removing transactions table."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactionbeveragesTable": {
+      "post": {
+        "tags": ["Transaction Beverages Table"],
+        "summary" : "Create transaction beverages table",
+        "description": "Creates `transactionbeverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully created `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Created transactionbeverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionbeverages already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while creating the `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while creating transactionbeverages table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Transaction Beverages Table"],
+        "summary" : "Clear transaction beverages table",
+        "description": "Clears `transactionbeverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully cleared `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cleared transactionbeverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionbeverages doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while clearing the `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while clearing transactionbeverages table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Transaction Beverages Table"],
+        "summary" : "Removes transaction beverages table",
+        "description": "Removes `transactionbeverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully removed `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Removed transactionbeverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionbeverages doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while removing the `transactionbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while removing transactionbeverages table."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactionrecommendedbeveragesTable": {
+      "post": {
+        "tags": ["Transaction Recommended Beverages Table"],
+        "summary" : "Create transaction recommended beverages table",
+        "description": "Creates `transactionrecommendedbeverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully created `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Created transactionrecommendedbeverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionrecommendedbeverages already exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while creating the `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while creating transactionrecommendedbeverages table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Transaction Recommended Beverages Table"],
+        "summary" : "Clear transaction recommended beverages table",
+        "description": "Clears `transactionrecommendedbeverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully cleared `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cleared transactionrecommendedbeverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionrecommendedbeverages doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while clearing the `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while clearing transactionrecommendedbeverages table."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Transaction Recommended Beverages Table"],
+        "summary" : "Removes transaction recommended beverages table",
+        "description": "Removes `transactionrecommendedbeverages table` in database.",
+        "consumes": [],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully removed `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Removed transactionrecommendedbeverages table."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Table: transactionrecommendedbeverages doesn't exists."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while removing the `transactionrecommendedbeverages table`.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while removing transactionrecommendedbeverages table."
                 }
               }
             }
@@ -559,6 +1565,95 @@
         "temperature": {
           "type": "number",
           "example": 24
+        }
+      }
+    },
+    "AddTransactionSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        },
+        "time": {
+          "type": "string",
+          "example": "2022-07-04T23:44:31.035Z"
+        },
+        "season": {
+          "type": "string",
+          "example": "rainy"
+        },
+        "gender": {
+          "type": "string",
+          "example": "male"
+        },
+        "age": {
+          "type": "number",
+          "example": 20
+        },
+        "emotion_id": {
+          "type": "number",
+          "example": 1
+        },
+        "weather": {
+          "type": "string",
+          "example": "Clear Sky"
+        },
+        "temperature": {
+          "type": "number",
+          "example": 24
+        },
+        "beverages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "CocaCola"
+          }
+        },
+        "recommended_beverages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "Pepsi"
+          }
+        }
+      }
+    },
+    "FullTransaction": {
+      "$ref": "#/definitions/AddTransactionSchema"
+    },
+    "Id": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "TransactionBeverage": {
+      "type": "object",
+      "properties": {
+        "transaction_id": {
+          "type": "number",
+          "example": 1
+        },
+        "beverage_id": {
+          "type": "number",
+          "example": 1
+        }
+      }
+    },
+    "TransactionRecommendedBeverage": {
+      "type": "object",
+      "properties": {
+        "transaction_id": {
+          "type": "number",
+          "example": 1
+        },
+        "beverage_id": {
+          "type": "number",
+          "example": 1
         }
       }
     }

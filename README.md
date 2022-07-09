@@ -1,8 +1,10 @@
-# Data Collector for [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/)
+# Data Collector for [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/tree/recommendation_using_only_emotion)
 
-A simple api for a database, which stores the transactions made in the app: [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/)
+A simple api for a database, which stores the transactions made in the app: [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/tree/recommendation_using_only_emotion)
 
 When a transaction is made, it stores the `time, season, gender, age, emotion_id, weather, temperature` fields in `transactions table`, then it stores beverages in `transactionbeverages table`, and recommended beverages in `transactionrecommendedbeverages table`.
+
+Api docs can be accessed at `/api-docs` endpoint.
 
 ## Database Schema
 > Beverages Table

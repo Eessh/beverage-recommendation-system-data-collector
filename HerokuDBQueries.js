@@ -65,7 +65,44 @@ const getBeverages = async (req, res) => {
         return;
       }
       console.log("Log: beverages: ", results.rows);
-      res.status(200).json({beverages: results.rows});
+      res.status(200).json(results.rows);
+    });
+  }
+};
+
+const getBeverageById = async (req, res) => {
+  if (!await tableExists("beverages")) {
+    console.log("Log: Table: beverages has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: beverages has not been created yet."});
+    return;
+  }
+  else {
+    const id = req.body.beverageId;
+    if (id===undefined || id===null) {
+      // returning a client error
+      res.status(400).json({info: "Request should contain beverageId field in body."});
+      return;
+    }
+    
+    client.query(`
+      SELECT *
+      FROM beverages
+      WHERE id=$1
+    `, [id], (err, results) => {
+      if (err) {
+        console.log(`Log: Error while fetching beverage with id: ${id}, Erorr: `, err);
+        // returning server error
+        res.status(500).json({info: `Error while fetching beverage with id: ${id}.`});
+        return;
+      }
+      if (results.rows.length < 1) {
+        // returning client error
+        res.status(400).json({info: `No beverage found with id: ${id}.`});
+        return;
+      }
+      console.log(`Log: Fetched beverage with id: ${id}, beverage: ${results.rows[0]}.`);
+      res.status(200).json(results.rows[0]);
     });
   }
 };
@@ -152,7 +189,44 @@ const getEmotions = async (req, res) => {
         res.status(500).json({info: `Error while getting all emotions.`});
       }
       console.log("Log: emotions: ", results.rows);
-      res.status(200).json({emotions: results.rows});
+      res.status(200).json(results.rows);
+    });
+  }
+};
+
+const getEmotionById = async (req, res) => {
+  if (!await tableExists("emotions")) {
+    console.log("Log: Table: emotions has not been created yet.");
+    // returning a server error
+    res.status(500).json({info: "Table: emotions has not been created yet."});
+    return;
+  }
+  else {
+    const id = req.body.emotionId;
+    if (id===undefined || id===null) {
+      // returning a client error
+      res.status(400).json({info: "Request should contain emotionId field in body."});
+      return;
+    }
+    
+    client.query(`
+      SELECT *
+      FROM emotions
+      WHERE id=$1
+    `, [id], (err, results) => {
+      if (err) {
+        console.log(`Log: Error while fetching emotion with id: ${id}, Erorr: `, err);
+        // returning server error
+        res.status(500).json({info: `Error while emotion beverage with id: ${id}.`});
+        return;
+      }
+      if (results.rows.length < 1) {
+        // returning client error
+        res.status(400).json({info: `No emotion found with id: ${id}.`});
+        return;
+      }
+      console.log(`Log: Fetched emotion with id: ${id}, emotion: ${results.rows[0]}.`);
+      res.status(200).json(results.rows[0]);
     });
   }
 };
@@ -237,7 +311,7 @@ const getTransactions = async (req, res) => {
         return;
       }
       console.log("Log: transactions: ", results.rows);
-      res.status(200).json({transactions: results.rows});
+      res.status(200).json(results.rows);
     });
   }
 };
@@ -259,7 +333,7 @@ const getTransactionsIds = async (req, res) => {
       res.status(500).json({info: `Error occurred while getting all id's of transactions.`});
       return;
     }
-    res.status(200).json({ids: results.rows});
+    res.status(200).json(results.rows);
   });
 };
 
@@ -721,493 +795,6 @@ const getTransactionRecommendedBeveragesById = async (req, res) => {
 
 
 
-// ----------- Tags
-const getTags = async (req, res) => {
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  else {
-    client.query(`
-      SELECT * FROM tags
-    `, [], (err, results) => {
-      if (err) {
-        console.log("Log: Error occurred while getting all tags: ", err);
-        // returning server error
-        res.status(500).json({info: "Error occurred while getting all tags"});
-        return;
-      }
-      console.log("Log: tags: ", results.rows);
-      res.status(200).json({tags: results.rows});
-    });
-  }
-};
-
-const addTag = async (req, res) => {
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  else {
-    const tag = req.body.tag;
-    if (tag===undefined || tag===null) {
-      // returning a client error
-      res.status(400).json({info: "Request should contain tag field in body!!!"});
-      return;
-    }
-    
-    client.query(`
-      INSERT INTO tags (name) VALUES ($1)
-    `, [tag], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while inserting tag: ${tag}, Erorr: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while inserting tag: ${tag}`});
-        return;
-      }
-      console.log(`Log: Added tag: ${tag} into tags table.`);
-      res.status(200).json({info: `Added tag: ${tag} into tags table.`})
-    });
-  }
-};
-
-const removeTag = async (req, res) => {
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  else {
-    const tag = req.body.tag;
-    if (tag===undefined || tag===null) {
-      // returning a client error
-      res.status(400).json({info: "Request should contain tag field in body!!!"});
-      return;
-    }
-  
-    client.query(`
-      DELETE FROM beverages
-      WHERE name=$1
-    `, [tag], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while deleting tag: ${tag}, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while deleting tag: ${tag}`});
-        return;
-      }
-      console.log(`Log: Deleted tag: ${tag} from tags table.`);
-      res.status(200).json({info: `Deleted tag: ${tag} from tags table.`});
-    });
-  }
-};
-
-
-
-
-// ----------- Settings
-const getSettings = async (req, res) => {
-  if (!await tableExists("settings")) {
-    console.log("Log: Table: settings has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: settings has not been created yet."});
-    return;
-  }
-  if (!await tableExists("emotions")) {
-    console.log("Log: Table: emotions has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: emotions has not been created yet."});
-    return;
-  }
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  client.query(`
-    SELECT emotions.name AS emotion, tags.name AS tag, state
-    FROM emotions, tags, settings
-    WHERE emotion_id=emotions.id AND tag_id=tags.id
-  `, [], (err, results) => {
-    if (err) {
-      console.log(`Log: Error occurred while getting all settings, Error: `, err);
-      // returning a server error
-      res.status(500).json({info: `Error occurred while getting all settings.`});
-      return;
-    }
-    console.log(`Log: Settings: `, results.rows);
-    res.status(200).json({settings: results.rows});
-  });
-};
-
-const getSettingByEmotionAndTag = async (req, res) => {
-  if (!await tableExists("settings")) {
-    console.log("Log: Table: settings has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: settings has not been created yet."});
-    return;
-  }
-  if (!await tableExists("emotions")) {
-    console.log("Log: Table: emotions has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: emotions has not been created yet."});
-    return;
-  }
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  const { emotion, tag } = req.body;
-  if (emotion===undefined || emotion===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain emotion field in body!!!"});
-    return;
-  }
-  if (tag===undefined || tag===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain tag field in body!!!"});
-    return;
-  }
-  // checking if that setting is already present
-  client.query(`
-    SELECT *
-    FROM settings
-    WHERE emotion_id=(
-      SELECT id
-      FROM emotions
-      WHERE name=$1
-    ) AND tag_id=(
-      SELECT id
-      FROM tags
-      WHERE name=$2
-    )
-  `, [emotion, tag], (err, results) => {
-    if (err) {
-      console.log(`Log: Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}, Error: `, err);
-      // returning a sever error
-      res.status(500).json({info: `Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}.`});
-      return;
-    }
-    if (results.rows.length < 1) {
-      console.log(`Log: Setting, emotion: ${emotion}, tag: ${tag} is not present. Use addSetting() method, to add the setting.`);
-      // returning a client error
-      res.status(400).json({info: `Setting, emotion: ${emotion}, tag: ${tag} is not present. Use addSetting() method, to add the setting.`});
-      return;
-    }
-    else {
-      console.log(`Log: Setting: `, results.rows[0]);
-      res.status(200).json({setting: results.rows[0]});
-    }
-  });
-};
-
-const addSetting = async (req, res) => {
-  if (!await tableExists("settings")) {
-    console.log("Log: Table: settings has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: settings has not been created yet."});
-    return;
-  }
-  if (!await tableExists("emotions")) {
-    console.log("Log: Table: emotions has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: emotions has not been created yet."});
-    return;
-  }
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  const { emotion, tag, state } = req.body;
-  if (emotion===undefined || emotion===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain emotion field in body!!!"});
-    return;
-  }
-  if (tag===undefined || tag===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain tag field in body!!!"});
-    return;
-  }
-  if (state===undefined || state===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain state field in body!!!"});
-    return;
-  }
-  // checking if that setting is already present
-  client.query(`
-    SELECT *
-    FROM settings
-    WHERE emotion_id=(
-      SELECT id
-      FROM emotions
-      WHERE name=$1
-    ) AND tag_id=(
-      SELECT id
-      FROM tags
-      WHERE name=$2
-    )
-  `, [emotion, tag], (err, results) => {
-    if (err) {
-      console.log(`Log: Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}, Error: `, err);
-      // returning a sever error
-      res.status(500).json({info: `Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}.`});
-      return;
-    }
-    if (results.rows.length > 0) {
-      console.log(`Log: Setting, emotion: ${emotion}, tag: ${tag} is already present. Use updateSetting() method, to update the setting.`);
-      // returning a client error
-      res.status(400).json({info: `Setting, emotion: ${emotion}, tag: ${tag} is already present. Use updateSetting() method, to update the setting.`});
-      return;
-    }
-    else {
-      // If setting is not present, we will add it
-      client.query(`
-        INSERT INTO settings (emotion_id, tag_id, state)
-        SELECT emotions.id, tags.id, $3
-        FROM emotions, tags
-        WHERE emotions.name=$1 AND tags.name=$2
-      `, [emotion, tag, state], (err, results) => {
-        if (err) {
-          console.log(`Log: Error while adding setting, emotion: ${emotion}, tag: ${tag}, state: ${state}, Error: `, err);
-          // returnning a server error
-          res.state(500).json({info: `Error while adding setting, emotion: ${emotion}, tag: ${tag}, state: ${state}.`});
-          return;
-        }
-        console.log(`Log: Added setting, emotion: ${emotion}, tag: ${tag}, state: ${state}.`);
-        res.status(200).json({info: "Added setting."});
-      });
-    }
-  });
-};
-
-const updateSetting = async (req, res) => {
-  if (!await tableExists("settings")) {
-    console.log("Log: Table: settings has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: settings has not been created yet."});
-    return;
-  }
-  if (!await tableExists("emotions")) {
-    console.log("Log: Table: emotions has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: emotions has not been created yet."});
-    return;
-  }
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  const { emotion, tag, state } = req.body;
-  if (emotion===undefined || emotion===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain emotion field in body!!!"});
-    return;
-  }
-  if (tag===undefined || tag===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain tag field in body!!!"});
-    return;
-  }
-  if (state===undefined || state===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain state field in body!!!"});
-    return;
-  }
-  // checking if that setting is already present
-  client.query(`
-    SELECT *
-    FROM settings
-    WHERE emotion_id=(
-      SELECT id
-      FROM emotions
-      WHERE name=$1
-    ) AND tag_id=(
-      SELECT id
-      FROM tags
-      WHERE name=$2
-    )
-  `, [emotion, tag], (err, results) => {
-    if (err) {
-      console.log(`Log: Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}, Error: `, err);
-      // returning a sever error
-      res.status(500).json({info: `Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}.`});
-      return;
-    }
-    if (results.rows.length < 1) {
-      console.log(`Log: Setting, emotion: ${emotion}, tag: ${tag} is not present. Use addSetting() method, to add the setting.`);
-      // returning a client error
-      res.status(400).json({info: `Setting, emotion: ${emotion}, tag: ${tag} is not present. Use addSetting() method, to add the setting.`});
-      return;
-    }
-    else {
-      // If setting is present, we will update it
-      client.query(`
-        UPDATE settings
-        SET state=$3
-        WHERE emotion_id=(
-          SELECT id
-          FROM emotions
-          WHERE name=$1
-        ) AND tag_id=(
-          SELECT id
-          FROM tags
-          WHERE name=$2
-        )
-      `, [emotion, tag, state], (err, results) => {
-        if (err) {
-          console.log(`Log: Error while updating setting, emotion: ${emotion}, tag: ${tag}, state: ${state}, Error: `, err);
-          // returnning a server error
-          res.state(500).json({info: `Error while updating setting, emotion: ${emotion}, tag: ${tag}, state: ${state}.`});
-          return;
-        }
-        console.log(`Log: Updated setting, emotion: ${emotion}, tag: ${tag}, state: ${state}.`);
-        res.status(200).json({info: "Updated setting."});
-      });
-    }
-  });
-};
-
-const removeSetting = async (req, res) => {
-  if (!await tableExists("settings")) {
-    console.log("Log: Table: settings has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: settings has not been created yet."});
-    return;
-  }
-  if (!await tableExists("emotions")) {
-    console.log("Log: Table: emotions has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: emotions has not been created yet."});
-    return;
-  }
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags has not been created yet.");
-    // returning a server error
-    res.status(500).json({info: "Table: tags has not been created yet."});
-    return;
-  }
-  const { emotion, tag } = req.body;
-  if (emotion===undefined || emotion===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain emotion field in body!!!"});
-    return;
-  }
-  if (tag===undefined || tag===null) {
-    // returning a client error
-    res.status(400).json({info: "Request should contain tag field in body!!!"});
-    return;
-  }
-  // checking if that setting is already present
-  client.query(`
-    SELECT *
-    FROM settings
-    WHERE emotion_id=(
-      SELECT id
-      FROM emotions
-      WHERE name=$1
-    ) AND tag_id=(
-      SELECT id
-      FROM tags
-      WHERE name=$2
-    )
-  `, [emotion, tag], (err, results) => {
-    if (err) {
-      console.log(`Log: Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}, Error: `, err);
-      // returning a sever error
-      res.status(500).json({info: `Error occurred while checking for presence of setting, emotion: ${emotion}, tag: ${tag}.`});
-      return;
-    }
-    if (results.rows.length < 1) {
-      console.log(`Log: Setting, emotion: ${emotion}, tag: ${tag} is not present. Use addSetting() method, to add the setting.`);
-      // returning a client error
-      res.status(400).json({info: `Setting, emotion: ${emotion}, tag: ${tag} is not present. Use addSetting() method, to add the setting.`});
-      return;
-    }
-    else {
-      // If setting is present, we will delete it
-      client.query(`
-        DELETE FROM settings
-        WHERE emotion_id=(
-          SELECT id
-          FROM emotions
-          WHERE name=$1
-        ) AND tag_id=(
-          SELECT id
-          FROM tags
-          WHERE name=$2
-        )
-      `, [emotion, tag, state], (err, results) => {
-        if (err) {
-          console.log(`Log: Error while updating setting, emotion: ${emotion}, tag: ${tag}, state: ${state}, Error: `, err);
-          // returnning a server error
-          res.state(500).json({info: `Error while updating setting, emotion: ${emotion}, tag: ${tag}, state: ${state}.`});
-          return;
-        }
-        console.log(`Log: Updated setting, emotion: ${emotion}, tag: ${tag}, state: ${state}.`);
-        res.status(200).json({info: "Updated setting."});
-      });
-    }
-  });
-};
-
-
-
-
-// ----------- Most bought beverage, currently kept aside, as we don't use it
-const getMostBoughtBeverage = (req, res) => {
-  if (!tableExists("transactions")) {
-    // returning a server error
-    res.status(500).json({info: "Table: transactions has not been created yet."});
-    return;
-  }
-
-  client.query(`
-    SELECT * FROM transactions
-  `, [], (err, results) => {
-    if (err) {
-      console.log("Log: Error occurred while getting all transactions: ", err)
-      // returning a server error
-      res.status(500).json({info: "Error occurred while getting all transactions"});
-      return;
-    }
-    const beveragesMap = new Map();
-    results.rows.forEach((row) => {
-      row.beverages.forEach((beverage) => {
-        if (beveragesMap.has(beverage)) {
-          const count = beveragesMap.get(beverage);
-          beveragesMap.set(beverage, count+1);
-        }
-        else {
-          beveragesMap.set(beverage, 1);
-        }
-      });
-    });
-    let mostBought = null, maxCount = 0;
-    beveragesMap.forEach((value, key) => {
-      if (value > maxCount) {
-        maxCount = value;
-        mostBought = key;
-      }
-    });
-    res.status(200).json({mostBought: mostBought});
-  });
-};
-
-
-
-
 // ----------- Heroku DB Table Manipulations
 
 // ----------- Beverages
@@ -1286,82 +873,6 @@ const removeBeveragesTable = async (req, res) => {
 
 
 
-// ----------- Tags
-const createTagsTable = async (req, res) => {
-  if (await tableExists("tags")) {
-    console.log("Log: Table: tags already exists.");
-    // returning a client error
-    res.status(400).json({info: `Table: tags already exists.`});
-    return;
-  }
-  else {
-    client.query(`
-      CREATE TABLE tags (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(30)
-      )
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while creating tags table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Log: Error while creating tags table.`});
-        return;
-      }
-      console.log(`Log: Created tags table.`);
-      res.status(200).json({info: `Log: Created tags table.`});
-    });
-  }
-};
-
-const clearTagsTable = async (req, res) => {
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags doesn't exist.");
-    // returning a client error
-    res.status(400).json({info: `Table: tags doesn't exist.`});
-    return;
-  }
-  else {
-    client.query(`
-      TRUNCATE tags
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while clearing tags table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while clearing tags table.`});
-        return;
-      }
-      console.log(`Log: Cleared tags table.`);
-      res.status(200).json({info: `Cleared tags table.`});
-    });
-  }
-};
-
-const removeTagsTable = async (req, res) => {
-  if (!await tableExists("tags")) {
-    console.log("Log: Table: tags doesn't exist.");
-    // returning a client error
-    res.status(400).json({info: `Table: tags doesn't exist.`});
-    return;
-  }
-  else {
-    client.query(`
-      DROP TABLE tags
-    `, [], (err, resuts) => {
-      if (err) {
-        console.log(`Log: Error while removing tags table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while removing tags table`});
-        return;
-      }
-      console.log(`Log: Removed tags table.`);
-      res.status(200).json({info: `Removed tags table.`});
-    });
-  }
-};
-
-
-
-
 // ----------- Emotions
 const createEmotionsTable = async (req, res) => {
   if (await tableExists("emotions")) {
@@ -1431,83 +942,6 @@ const removeEmotionsTable = async (req, res) => {
       }
       console.log(`Log: Removed emotions table.`);
       res.status(200).json({info: `Removed emotions table.`});
-    });
-  }
-};
-
-
-
-
-// ----------- Beverage-Tags
-const createBeverageTagsTable = async (req, res) => {
-  if (await tableExists("beveragetags") || !await tableExists("beverages") || !await tableExists("tags")) {
-    console.log("Log: Table: beveragetags couldn't be created, reasons: beverages table is not created (or) tags table is not created (or) beveragetags table is already present.");
-    // returning a client error
-    res.status(400).json({info: `Table: beveragetags couldn't be created, reasons: beverages table is not created (or) tags table is not created (or) beveragetags table is already present.`});
-    return;
-  }
-  else {
-    client.query(`
-      CREATE TABLE beveragetags (
-        beverage_id INT NOT NULL REFERENCES beverages(id),
-        tag_id INT NOT NULL REFERENCES tags(id),
-        PRIMARY KEY (beverage_id, tag_id)
-      )
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while beveragetags table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while creating beveragetags table.`});
-        return;
-      }
-      console.log(`Log: Created beveragetags table.`);
-      res.status(200).json({info: `Created beveragetags table.`});
-    });
-  }
-};
-
-const clearBeverageTagsTable = async (req, res) => {
-  if (!await tableExists("beveragetags")) {
-    console.log("Log: Table: beveragetags doesn't exist.");
-    // returning a client error
-    res.status(400).json({info: `Table: beveragetags doesn't exist.`});
-    return;
-  }
-  else {
-    client.query(`
-      TRUNCATE beveragetags
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while clearing beveragetags table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while clearing beveragetags table.`});
-        return;
-      }
-      console.log(`Log: Cleared beveragetags table.`);
-      res.status(200).json({info: `Cleared beveragetags table.`});
-    });
-  }
-};
-
-const removeBeverageTagsTable = async (req, res) => {
-  if (!await tableExists("beveragetags")) {
-    console.log("Log: Table: beveragetags doesn't exist.");
-    // returning a client error
-    res.status(400).json({info: `Table: beveragetags doesn't exist.`});
-    return;
-  }
-  else {
-    client.query(`
-      DROP TABLE beveragetags
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while removing beveragetags table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while removing beveragetags table.`});
-        return;
-      }
-      console.log(`Log: Removed beveragetags table.`);
-      res.status(200).json({info: `Removed beveragetags table.`});
     });
   }
 };
@@ -1671,27 +1105,6 @@ const removeTransactionBeveragesTable = async (req, res) => {
   }
 };
 
-const test = async (req, res) => {
-  if (!await tableExists("transactionbeverages")) {
-    console.log("Log: Table: transactionbeverages has not been created yet.");
-    // returning a client error
-    res.status(400).json({info: "Table: transactionbeverages has not been created yet."});
-    return;
-  }
-  else {
-    client.query(`
-      SELECT * FROM transactionbeverages
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while getting all rows in transactionbeverages table.`);
-        // returning server error
-        res.status(500).json({info: `Error while getting all rows in transactionbeverages table.`});
-      }
-      res.status(200).json({transactionbeverages: results.rows});
-    });
-  }
-};
-
 
 
 
@@ -1769,117 +1182,17 @@ const removeTransactionRecommendedBeveragesTable = async (req, res) => {
   }
 };
 
-const test2 = async (req, res) => {
-  if (!await tableExists("transactionrecommendedbeverages")) {
-    console.log("Log: Table: transactionrecommendedbeverages has not been created yet.");
-    // returning a client error
-    res.status(400).json({info: "Table: transactionrecommendedbeverages has not been created yet."});
-    return;
-  }
-  else {
-    client.query(`
-      SELECT * FROM transactionrecommendedbeverages
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while getting all rows in transactionrecommendedbeverages table.`);
-        // returning server error
-        res.status(500).json({info: `Error while getting all rows in transactionrecommendedbeverages table.`});
-      }
-      res.status(200).json({transactionrecommendedbeverages: results.rows});
-    });
-  }
-};
-
-
-
-
-// ----------- Settings
-const createSettingsTable = async (req, res) => {
-  if (await tableExists("settings") || !await tableExists("emotions") || !await tableExists("tags")) {
-    console.log("Log: Table: settings, couldn't be created, reasons: emotions table is not created (or) tags table is not created (or) settings table is already present");
-    // returning a client error
-    res.status(400).json({info: `Table: settings, couldn't be created, reasons: emotions table is not created (or) tags table is not created (or) settings table is already present.`});
-    return;
-  }
-  else {
-    client.query(`
-      CREATE TABLE settings (
-        emotion_id INT NOT NULL REFERENCES emotions(id),
-        tag_id INT NOT NULL REFERENCES tags(id),
-        PRIMARY KEY (emotion_id, tag_id)
-      )
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while creating settings table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while creating settings table.`});
-        return;
-      }
-      console.log(`Log: Created settings table.`);
-      res.status(200).json({info: `Created settings table.`});
-    });
-  }
-};
-
-const clearSettingsTable = async (req, res) => {
-  if (!await tableExists("settings")) {
-    console.log("Log: Table: settings doesn't exists.");
-    // returning a client error
-    res.status(400).json({info: `Table: settings doesn't exists.`});
-    return;
-  }
-  else {
-    client.query(`
-      TRUNCATE settings
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while truncating settings table, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while clearing settings table.`});
-        return;
-      }
-      console.log(`Log: Truncated settings table.`);
-      res.status(200).json({info: `Cleared settings table.`});
-    });
-  }
-};
-
-const removeSettingsTable = async (req, res) => {
-  if (!await tableExists("settings")) {
-    console.log("Log: Table: settings doesn't exists.");
-    // returning a client error
-    res.status(400).json({info: `Table: settings doesn't exists.`});
-    return;
-  }
-  else {
-    client.query(`
-      DROP TABLE settings
-    `, [], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while removing settings table.`);
-        // returning server error
-        res.status(500).json({info: `Error while removing settings table.`});
-        return;
-      }
-      console.log(`Log: Removed settings table.`);
-      res.status(200).json({info: `Removed settings table.`});
-    });
-  }
-};
-
 
 
 
 module.exports = {
   getBeverages,
+  getBeverageById,
   addBeverage,
   removeBeverage,
   
-  getTags,
-  addTag,
-  removeTag,
-
   getEmotions,
+  getEmotionById,
   addEmotion,
   removeEmotion,
 
@@ -1893,30 +1206,14 @@ module.exports = {
   getTransactionRecommendedBeverages,
   getTransactionRecommendedBeveragesById,
 
-  getSettings,
-  getSettingByEmotionAndTag,
-  addSetting,
-  updateSetting,
-  removeSetting,
-
-  getMostBoughtBeverage,
-  
   createBeveragesTable,
   clearBeveragesTable,
   removeBeveragesTable,
   
-  createTagsTable,
-  clearTagsTable,
-  removeTagsTable,
-
   createEmotionsTable,
   clearEmotionsTable,
   removeEmotionsTable,
   
-  createBeverageTagsTable,
-  clearBeverageTagsTable,
-  removeBeverageTagsTable,
-
   createTransactionsTable,
   clearTransactionsTable,
   removeTransactionsTable,
@@ -1924,14 +1221,8 @@ module.exports = {
   createTransactionBeveragesTable,
   clearTransactionBeveragesTable,
   removeTransactionBeveragesTable,
-  test,
 
   createTransactionRecommendedBeveragesTable,
   clearTransactionRecommendedBeveragesTable,
   removeTransactionRecommendedBeveragesTable,
-  test2,
-
-  createSettingsTable,
-  clearSettingsTable,
-  removeSettingsTable,
 };

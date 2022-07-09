@@ -16,14 +16,12 @@ const port = process.env.PORT || 5000;
 // const db = require("./LocalDBQueries.js");
 const {
   getBeverages,
+  getBeverageById,
   addBeverage,
   removeBeverage,
   
-  getTags,
-  addTag,
-  removeTag,
-
   getEmotions,
+  getEmotionById,
   addEmotion,
   removeEmotion,
 
@@ -37,30 +35,14 @@ const {
   getTransactionRecommendedBeverages,
   getTransactionRecommendedBeveragesById,
 
-  getSettings,
-  getSettingByEmotionAndTag,
-  addSetting,
-  updateSetting,
-  removeSetting,
-
-  getMostBoughtBeverage,
-  
   createBeveragesTable,
   clearBeveragesTable,
   removeBeveragesTable,
   
-  createTagsTable,
-  clearTagsTable,
-  removeTagsTable,
-
   createEmotionsTable,
   clearEmotionsTable,
   removeEmotionsTable,
   
-  createBeverageTagsTable,
-  clearBeverageTagsTable,
-  removeBeverageTagsTable,
-
   createTransactionsTable,
   clearTransactionsTable,
   removeTransactionsTable,
@@ -68,30 +50,22 @@ const {
   createTransactionBeveragesTable,
   clearTransactionBeveragesTable,
   removeTransactionBeveragesTable,
-  test,
 
   createTransactionRecommendedBeveragesTable,
   clearTransactionRecommendedBeveragesTable,
   removeTransactionRecommendedBeveragesTable,
-  test2,
-
-  createSettingsTable,
-  clearSettingsTable,
-  removeSettingsTable,
 } = require("./HerokuDBQueries");
 
 app.get("/", (req, res) => {
   res.status(200).json({info: "Server Running"});
 });
 
+app.get("/beverages/id", getBeverageById);
 app.get("/beverages", getBeverages);
 app.post("/beverages", addBeverage);
 app.delete("/beverages", removeBeverage);
 
-app.get("/tags", getTags);
-app.post("/tags", addTag);
-app.delete("/tags", removeTag);
-
+app.get("/emotions/id", getEmotionById);
 app.get("/emotions", getEmotions);
 app.post("/emotions", addEmotion);
 app.delete("/emotions", removeEmotion);
@@ -108,21 +82,9 @@ app.get("/transactionbeverages", getTransactionBeverages);
 app.get("/transactionrecommendedbeverages/id", getTransactionRecommendedBeveragesById);
 app.get("/transactionrecommendedbeverages", getTransactionRecommendedBeverages);
 
-app.get("/settings/emotionAndTag", getSettingByEmotionAndTag);
-app.get("/settings", getSettings);
-app.post("/settings", addSetting);
-app.patch("/settings", updateSetting);
-app.delete("/settings", removeSetting);
-
-app.get("/mostBought", getMostBoughtBeverage);
-
 app.post("/beveragesTable", createBeveragesTable);
 app.patch("/beveragesTable", clearBeveragesTable);
 app.delete("/beveragesTable", removeBeveragesTable);
-
-app.post("/tagsTable", createTagsTable);
-app.patch("/tagsTable", clearTagsTable);
-app.delete("/tagsTable", removeTagsTable);
 
 app.post("/emotionsTable", createEmotionsTable);
 app.patch("/emotionsTable", clearEmotionsTable);
@@ -135,17 +97,12 @@ app.delete("/transactionsTable", removeTransactionsTable);
 app.post("/transactionbeveragesTable", createTransactionBeveragesTable);
 app.patch("/transactionbeveragesTable", clearTransactionBeveragesTable);
 app.delete("/transactionbeveragesTable", removeTransactionBeveragesTable);
-app.get("/transactionbeveragesTable", test);
 
 app.post("/transactionrecommendedbeveragesTable", createTransactionRecommendedBeveragesTable);
 app.patch("/transactionrecommendedbeveragesTable", clearTransactionRecommendedBeveragesTable);
 app.delete("/transactionrecommendedbeveragesTable", removeTransactionRecommendedBeveragesTable);
-app.get("/transactionrecommendedbeveragesTable", test2);
 
-app.post("/settingsTable", createSettingsTable);
-app.patch("/settingsTable", clearSettingsTable);
-app.delete("/settingsTable", removeSettingsTable);
-
+// Queries for local db
 // app.get("/users", db.getUsers);
 // app.get("/users/:id", db.getUserById);
 // app.post("/users", db.createUser);

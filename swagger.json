@@ -66,14 +66,9 @@
           "200": {
             "description": "Successfully fetched all beverages.",
             "schema": {
-              "type": "object",
-              "properties": {
-                "beverages": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Beverage"
-                  }
-                }
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Beverage"
               }
             }
           },
@@ -216,6 +211,63 @@
         }
       }
     },
+    "/beverages/id": {
+      "get": {
+        "tags": ["Beverages"],
+        "summary" : "Get beverage by it's id",
+        "description": "Returns a beverage corresponding to specified id from the `beverages table` in DB.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Beverage id.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "beverageId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched beverage with given id.",
+            "schema": {
+              "$ref": "#/definitions/Beverage"
+            }
+          },
+          "400": {
+            "description": "Client error, invalid id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "No beverage found with id: 1."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching beverage.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while fetching beverage with id: 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/emotions": {
       "get": {
         "tags": ["Emotions"],
@@ -227,14 +279,9 @@
           "200": {
             "description": "Successfully fetched all emotions.",
             "schema": {
-              "type": "object",
-              "properties": {
-                "emotions": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Emotion"
-                  }
-                }
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Emotion"
               }
             }
           },
@@ -377,6 +424,63 @@
         }
       }
     },
+    "/emotions/id": {
+      "get": {
+        "tags": ["Emotions"],
+        "summary" : "Get emotion by it's id",
+        "description": "Returns an emotion corresponding to specified id from the `emotions table` in DB.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Emotion id.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "emotionId": {
+                  "type": "number",
+                  "example": 1
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully fetched emotion with given id.",
+            "schema": {
+              "$ref": "#/definitions/Emotion"
+            }
+          },
+          "400": {
+            "description": "Client error, invalid id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "No emotion found with id: 1."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server encountered an error while fetching emotion.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Error while fetching emotion with id: 1."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/transactions": {
       "get": {
         "tags": ["Transactions"],
@@ -388,14 +492,9 @@
           "200": {
             "description": "Successfully fetched all transactions.",
             "schema": {
-              "type": "object",
-              "properties": {
-                "transactions": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Transaction"
-                  }
-                }
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Transaction"
               }
             }
           },
@@ -486,14 +585,9 @@
           "200": {
             "description": "Successfully fetched all ids of transactions.",
             "schema": {
-              "type": "object",
-              "properties": {
-                "ids": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Id"
-                  }
-                }
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Id"
               }
             }
           },

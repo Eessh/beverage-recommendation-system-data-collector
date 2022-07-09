@@ -31,7 +31,7 @@
     },
     {
       "name": "DANGER ZONE",
-      "description": "Creating, Clearing and Removing tables form database."
+      "description": "Creating, Clearing and Removing tables form database.\n\nTable creation order: `beverages table`, `emotions table`, `transactions table`, `transactionbeverages table`, `transactionrecommendedbeverages table`.\n\nTable deletion order: `transactionrecommendedbeverages table`, `transactionbeverages table`, `transactions table`, `emotions table`, `beverages table`."
     },
     {
       "name": "Beverages Table",
@@ -54,12 +54,16 @@
       "description": "Everything about transactionrecommendedbeverages table."
     }
   ],
+  "externalDocs": {
+    "description": "See about this project in github (database schema is included in README).",
+    "url": "https://github.com/Eessh/beverage-recommendation-system-data-collector"
+  },
   "paths": {
     "/beverages": {
       "get": {
         "tags": ["Beverages"],
         "summary" : "Get all beverages",
-        "description": "Returns an array of beverages from the `beverages table` in DB.",
+        "description": "Returns an array of beverages from the `beverages table` in DB.\n\nThis method depends on `beverages table`, make sure it's created in database before sending any request to this endpoint.",
         "produces": ["application/json"],
         "parameters": [],
         "responses": {
@@ -89,7 +93,7 @@
       "post": {
         "tags": ["Beverages"],
         "summary" : "Add a beverage",
-        "description": "Add a beverage",
+        "description": "Adds a beverage into `beverages table` in DB.\n\nThis method depends on `beverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -151,7 +155,7 @@
       "delete": {
         "tags": ["Beverages"],
         "summary": "Delete a beverage.",
-        "description": "Delete a beverage",
+        "description": "Deletes a beverage from `beverages table` in DB.\n\nThis method depends on `beverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -215,7 +219,7 @@
       "get": {
         "tags": ["Beverages"],
         "summary" : "Get beverage by it's id",
-        "description": "Returns a beverage corresponding to specified id from the `beverages table` in DB.",
+        "description": "Returns a beverage corresponding to specified id from the `beverages table` in DB.\n\nThis method depends on `beverages table`, make sure it's created in database before sending any request to this endpoint.",
         "produces": ["application/json"],
         "parameters": [
           {
@@ -272,7 +276,7 @@
       "get": {
         "tags": ["Emotions"],
         "summary" : "Get all emotions.",
-        "description": "Returns an array of emotions from the `emotions table` in DB.",
+        "description": "Returns an array of emotions from the `emotions table` in DB.\n\nThis method depends on `emotions table`, make sure it's created in database before sending any request to this endpoint.",
         "produces": ["application/json"],
         "parameters": [],
         "responses": {
@@ -302,7 +306,7 @@
       "post": {
         "tags": ["Emotions"],
         "summary" : "Add an emotion.",
-        "description": "Add an emotion.",
+        "description": "Adds the emotion to `emotions table` in DB.\n\nThis method depends on `emotions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -364,7 +368,7 @@
       "delete": {
         "tags": ["Emotions"],
         "summary": "Delete an emotion.",
-        "description": "Delete an emotion.",
+        "description": "Deletes the emotion from `emotions table` in DB.\n\nThis method depends on `emotions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -428,7 +432,7 @@
       "get": {
         "tags": ["Emotions"],
         "summary" : "Get emotion by it's id",
-        "description": "Returns an emotion corresponding to specified id from the `emotions table` in DB.",
+        "description": "Returns an emotion corresponding to specified id from the `emotions table` in DB.\n\nThis method depends on `emotions table`, make sure it's created in database before sending any request to this endpoint.",
         "produces": ["application/json"],
         "parameters": [
           {
@@ -485,7 +489,7 @@
       "get": {
         "tags": ["Transactions"],
         "summary" : "Get all transactions (not a full transaction).",
-        "description": "Returns an array of transactions from the `transactions table` in DB. This response doesn't include beverages, recommended beverages for each transaction.",
+        "description": "Returns an array of transactions from the `transactions table` in DB. This response doesn't include beverages, recommended beverages for each transaction.\n\nThis method depends on `transactions table`, make sure it's created in database before sending any request to this endpoint.",
         "produces": ["application/json"],
         "parameters": [],
         "responses": {
@@ -514,8 +518,8 @@
       },
       "post": {
         "tags": ["Transactions"],
-        "summary" : "Add a transaction.",
-        "description": "Add a transaction.",
+        "summary" : "Adds a transaction.",
+        "description": "Adds the transaction into DB.\n\nThis method depends on `transactions table`, `beverages table`, `emotions table`, `transactionbeverages table`, `transactionrecommendedbeverages table`, make sure these tables are created in database before sending any request to this endpoint.\n\nThis method basically takes the `season, age, gender, emotion, weather, temperature` parameters and stores them in the `transacations table`, then stores the `beverages` in the `transactionbeverages table`, then stores the `recommended_beverages` in the `transactionrecommendedbeverages table`.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -578,7 +582,7 @@
       "get": {
         "tags": ["Transactions"],
         "summary": "Get all ids of transactions made.",
-        "description": "Returns an array of ids of all transactions from the `transactions table`.",
+        "description": "Returns an array of ids of all transactions from the `transactions table` in DB.\n\nThis method depends on `transactions table`, make sure it's created in database before sending any request to this endpoint.",
         "produces": ["application/json"],
         "parameters": [],
         "responses": {
@@ -610,7 +614,7 @@
       "get": {
         "tags": ["Transactions"],
         "summary": "Get a transaction by its id. (Not a full transaction)",
-        "description": "Returns the transaction corresponding to the id, in the `transactions table`.",
+        "description": "Returns the transaction corresponding to the id, in the `transactions table` in DB.\n\nThis method depends on `transactions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -673,7 +677,7 @@
       "get": {
         "tags": ["Transactions"],
         "summary": "Get a full transaction by its id.",
-        "description": "Returns the transaction corresponding to the id, in the `transactions table`, with beverages and recommended beverages.",
+        "description": "Returns the transaction corresponding to the id, in the `transactions table`, with beverages and recommended beverages.\n\nThis method depends on `transactions table`, `beverages table`, `emotions table`, `transactionbeverages table`, `transactionrecommendedbeverages table`, make sure these tables are created in database before sending any request to this endpoint.\n\nThe function of this method was to take `id, time, season, age, gender, emotion, weather, temperature` from `transactions table`, and `beverages` from `transactionbeverages table`, then `recommended_beevrages` from `transactionrecommendedbeverages table`.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -736,7 +740,7 @@
       "get": {
         "tags": ["Transaction Beverages"],
         "summary": "Beverages for each transaction.",
-        "description": "Returns the beverages for each transactions, from the `transactionbeverages table`.",
+        "description": "Returns the beverages for each transactions, from the `transactionbeverages table` in DB.\n\nThis method depends on `transactionbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -769,7 +773,7 @@
       "get": {
         "tags": ["Transaction Beverages"],
         "summary": "Beverages for given transaction id.",
-        "description": "Returns the beverages for given transaction id, from the `transactionbeverages table`.",
+        "description": "Returns the beverages for given transaction id, from the `transactionbeverages table` in DB.\n\nThis method depends on `transactionbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -818,7 +822,7 @@
       "get": {
         "tags": ["Transaction Recommended Beverages"],
         "summary": "Recommended Beverages for each of transactions.",
-        "description": "Returns the recommended beverages for each of transactions, from the `transactionrecommendedbeverages table`.",
+        "description": "Returns the recommended beverages for each of transactions, from the `transactionrecommendedbeverages table` in DB.\n\nThis method depends on `transactionrecommendedbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -851,7 +855,7 @@
       "get": {
         "tags": ["Transaction Recommended Beverages"],
         "summary": "Recommended Beverages for given transaction id.",
-        "description": "Returns the recommended beverages for given transaction id, from the `transactionrecommendedbeverages table`.",
+        "description": "Returns the recommended beverages for given transaction id, from the `transactionrecommendedbeverages table` in DB.\n\nThis method depends on `transactionrecommendedbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -900,7 +904,7 @@
       "post": {
         "tags": ["Beverages Table"],
         "summary" : "Create beverages table",
-        "description": "Creates `beverages table` in database.",
+        "description": "Creates `beverages table` in database.\n\nTables `transactionbeverages table`, `transactionrecommendedbeverages table` depends on this table(`beverages table`). So make sure to create this table before sending request to create them.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -946,7 +950,7 @@
       "patch": {
         "tags": ["Beverages Table"],
         "summary" : "Clear beverages table",
-        "description": "Clears `beverages table` in database.",
+        "description": "Clears `beverages table` in database.\n\nThis method depends on `beverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -992,7 +996,7 @@
       "delete": {
         "tags": ["Beverages Table"],
         "summary" : "Removes beverages table",
-        "description": "Removes `beverages table` in database.",
+        "description": "Removes `beverages table` in database.\n\nThis method depends on `beverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1040,7 +1044,7 @@
       "post": {
         "tags": ["Emotions Table"],
         "summary" : "Create emotions table",
-        "description": "Creates `emotions table` in database.",
+        "description": "Creates `emotions table` in database.\n\nTable `transactions table` depends on this table(`emotions table`), make sure you have created this table before sending request to create that table(`transactions table`).",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1086,7 +1090,7 @@
       "patch": {
         "tags": ["Emotions Table"],
         "summary" : "Clear emotions table",
-        "description": "Clears `emotions table` in database.",
+        "description": "Clears `emotions table` in database.\n\nThis method depends on `emotions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1132,7 +1136,7 @@
       "delete": {
         "tags": ["Emotions Table"],
         "summary" : "Removes emotions table",
-        "description": "Removes `emotions table` in database.",
+        "description": "Removes `emotions table` in database.\n\nThis method depends on `emotions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1180,7 +1184,7 @@
       "post": {
         "tags": ["Transactions Table"],
         "summary" : "Create transactions table",
-        "description": "Creates `transactions table` in database.",
+        "description": "Creates `transactions table` in database.\n\nThis method depends on `emotions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1226,7 +1230,7 @@
       "patch": {
         "tags": ["Transactions Table"],
         "summary" : "Clear transactions table",
-        "description": "Clears `transactions table` in database.",
+        "description": "Clears `transactions table` in database.\n\nThis method depends on `transactions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1272,7 +1276,7 @@
       "delete": {
         "tags": ["Transactions Table"],
         "summary" : "Removes transactions table",
-        "description": "Removes `transactions table` in database.",
+        "description": "Removes `transactions table` in database.\n\nThis method depends on `transactions table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1320,7 +1324,7 @@
       "post": {
         "tags": ["Transaction Beverages Table"],
         "summary" : "Create transaction beverages table",
-        "description": "Creates `transactionbeverages table` in database.",
+        "description": "Creates `transactionbeverages table` in database.\n\nThis method depends on `transactions table`, `beverages table`, make sure they are created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1366,7 +1370,7 @@
       "patch": {
         "tags": ["Transaction Beverages Table"],
         "summary" : "Clear transaction beverages table",
-        "description": "Clears `transactionbeverages table` in database.",
+        "description": "Clears `transactionbeverages table` in database.\n\nThis method depends on `transactionbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1412,7 +1416,7 @@
       "delete": {
         "tags": ["Transaction Beverages Table"],
         "summary" : "Removes transaction beverages table",
-        "description": "Removes `transactionbeverages table` in database.",
+        "description": "Removes `transactionbeverages table` in database.\n\nThis method depends on `transactionbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1460,7 +1464,7 @@
       "post": {
         "tags": ["Transaction Recommended Beverages Table"],
         "summary" : "Create transaction recommended beverages table",
-        "description": "Creates `transactionrecommendedbeverages table` in database.",
+        "description": "Creates `transactionrecommendedbeverages table` in database.\n\nThis method depends on `transactions table`, `beverages table`, make sure they are created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1506,7 +1510,7 @@
       "patch": {
         "tags": ["Transaction Recommended Beverages Table"],
         "summary" : "Clear transaction recommended beverages table",
-        "description": "Clears `transactionrecommendedbeverages table` in database.",
+        "description": "Clears `transactionrecommendedbeverages table` in database.\n\nThis method depends on `transactionrecommendedbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],
@@ -1552,7 +1556,7 @@
       "delete": {
         "tags": ["Transaction Recommended Beverages Table"],
         "summary" : "Removes transaction recommended beverages table",
-        "description": "Removes `transactionrecommendedbeverages table` in database.",
+        "description": "Removes `transactionrecommendedbeverages table` in database.\n\nThis method depends on `transactionrecommendedbeverages table`, make sure it's created in database before sending any request to this endpoint.",
         "consumes": [],
         "produces": ["application/json"],
         "parameters": [],

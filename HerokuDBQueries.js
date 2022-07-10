@@ -152,18 +152,40 @@ const removeBeverage = async (req, res) => {
       return;
     }
   
+    // checking whether the beverage was present, before deletion
     client.query(`
-      DELETE FROM beverages
+      SELECT *
+      FROM beverages
       WHERE name=$1
-    `, [beverage], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while deleting beverage: ${beverage}, Error: `, err);
+    `, [beverage], (err0, results0) => {
+      if (err0) {
+        console.log(`Log: Error while checking for presence of beverage: ${beverage} in beverages table, Error: `, err);
         // returning server error
-        res.status(500).json({info: `Error while deleting beverage: ${beverage}`});
+        res.status(500).json({info: `Error while checking for presence of beverage: ${beverage} in beverages table.`});
         return;
       }
-      console.log(`Log: Deleted beverage: ${beverage} from beverages table.`);
-      res.status(200).json({info: `Deleted beverage: ${beverage} from beverages table.`});
+      if (results0.rows.length < 1) {
+        console.log(`Log: Beverage: ${beverage} was not found in beverages table, hence cannot be deleted.`);
+        // returning client error
+        res.status(400).json({info: `Beverage: ${beverage} was not found in beverages table, hence cannot be deleted.`});
+        return;
+      }
+      else {
+        // deleting beverage
+        client.query(`
+          DELETE FROM beverages
+          WHERE name=$1
+        `, [beverage], (err, results) => {
+          if (err) {
+            console.log(`Log: Error while deleting beverage: ${beverage}, Error: `, err);
+            // returning server error
+            res.status(500).json({info: `Error while deleting beverage: ${beverage}`});
+            return;
+          }
+          console.log(`Log: Deleted beverage: ${beverage} from beverages table.`);
+          res.status(200).json({info: `Deleted beverage: ${beverage} from beverages table.`});
+        });
+      }
     });
   }
 };
@@ -275,16 +297,36 @@ const removeEmotion = async (req, res) => {
     }
     
     client.query(`
-      DELETE FROM emotions
+      SELECT *
+      FROM emotions
       WHERE name=$1
-    `, [emotion], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while deleting emotion: ${emotion}, Error: `, err);
+    `, [emotion], (err0, results0) => {
+      if (err0) {
+        console.log(`Log: Error while checking presence of emotion: ${emotion} in emotions table, Error: `, err);
         // returning server error
-        res.status(500).json({info: `Error while deleting emotion: ${emotion}.`});
+        res.status(500).json({info: `Error while checking presence of emotion: ${emotion} in emotions table.`});
+        return;
       }
-      console.log(`Log: Removed emotion: ${emotion} from emotions table.`);
-      res.status(200).json({info: `Removed emotion: ${emotion} from emotions table.`});
+      if (results0.rows.length < 1) {
+        console.log(`Log: Emotion: ${emotion} was not found in emotions table, hence cannot be deleted.`);
+        // returning client error
+        res.status(400).json({info: `Emotion: ${emotion} was not found in emotions table, hence cannot be deleted.`});
+        return;
+      }
+      else {
+        client.query(`
+          DELETE FROM emotions
+          WHERE name=$1
+        `, [emotion], (err, results) => {
+          if (err) {
+            console.log(`Log: Error while deleting emotion: ${emotion}, Error: `, err);
+            // returning server error
+            res.status(500).json({info: `Error while deleting emotion: ${emotion}.`});
+          }
+          console.log(`Log: Removed emotion: ${emotion} from emotions table.`);
+          res.status(200).json({info: `Removed emotion: ${emotion} from emotions table.`});
+        });
+      }
     });
   }
 };
@@ -721,10 +763,17 @@ const getTransactionBeveragesById = async (req, res) => {
   `, [transactionId], (err, results) => {
     if (err) {
       console.log(`Log: Error while getting transaction beverages, transaction_id: ${transactionId}, Error: `, err);
-      // returning a server error;
+      // returning a server error
       res.status(500).json({info: `Error while getting transaction beverages, transaction_id: ${transactionId}.`});
       return;
     }
+    if (results.rows.length < 1) {
+      console.log(`Log: Cannot find a row with id: ${id} in transactionbeverages table.`);
+      // returning a client error
+      res.status(400).json({info: `Cannot find a row with id: ${id} in transactionbeverages table.`});
+      return;
+    }
+    console.log(`Log: Row with id: ${id} in transactionbeverages table: `, results.rows);
     res.status(200).json(results.rows);
   });
 };
@@ -788,6 +837,13 @@ const getTransactionRecommendedBeveragesById = async (req, res) => {
       res.status(500).json({info: `Error while getting transaction recommended beverages, transaction_id: ${transactionId}.`});
       return;
     }
+    if (results.rows.length < 1) {
+      console.log(`Log: Cannot find a row with id: ${id} in transactionrecommendedbeverages table.`);
+      // returning a client error
+      res.status(400).json({info: `Cannot find a row with id: ${id} in transactionrecommendedbeverages table.`});
+      return;
+    }
+    console.log(`Log: Row with id: ${id} in transactionrecommendedbeverages table: `, results.rows);
     res.status(200).json(results.rows);
   });
 };

@@ -189,13 +189,13 @@
             }
           },
           "400": {
-            "description": "Client error, invalid request syntax.",
+            "description": "Client error, invalid request syntax (or) the given beverage was not present in `beverages table`.",
             "schema": {
               "type": "object",
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Request should contain beverage field in body."
+                  "example": "Beverage: CocaCola was not found in beverages table, hence cannot be deleted."
                 }
               }
             }
@@ -402,13 +402,13 @@
             }
           },
           "400": {
-            "description": "Client error, invalid request syntax.",
+            "description": "Client error, invalid request syntax (or) the given emotion was not present in `emotions table`.",
             "schema": {
               "type": "object",
               "properties": {
                 "info": {
                   "type": "string",
-                  "example": "Request should contain emotion field in body."
+                  "example": "Emotion: happy was not found in emotions table, hence cannot be deleted."
                 }
               }
             }
@@ -636,7 +636,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successfully transaction with the given id.",
+            "description": "Successfully fetched transaction with the given id.",
             "schema": {
               "type": "object",
               "properties": {
@@ -677,7 +677,7 @@
       "get": {
         "tags": ["Transactions"],
         "summary": "Get a full transaction by its id.",
-        "description": "Returns the transaction corresponding to the id, in the `transactions table`, with beverages and recommended beverages.\n\nThis method depends on `transactions table`, `beverages table`, `emotions table`, `transactionbeverages table`, `transactionrecommendedbeverages table`, make sure these tables are created in database before sending any request to this endpoint.\n\nThe function of this method was to take `id, time, season, age, gender, emotion, weather, temperature` from `transactions table`, and `beverages` from `transactionbeverages table`, then `recommended_beevrages` from `transactionrecommendedbeverages table`.",
+        "description": "Returns the transaction corresponding to the id, in the `transactions table`, with beverages and recommended beverages.\n\nThis method depends on `transactions table`, `beverages table`, `emotions table`, `transactionbeverages table`, `transactionrecommendedbeverages table`, make sure these tables are created in database before sending any request to this endpoint.\n\nThe function of this method was to take `id, time, season, age, gender, emotion, weather, temperature` from `transactions table`, and `beverages` from `transactionbeverages table`, then `recommended_beverages` from `transactionrecommendedbeverages table`.",
         "consumes": ["application/json"],
         "produces": ["application/json"],
         "parameters": [
@@ -803,6 +803,18 @@
               }
             }
           },
+          "400": {
+            "description": "Client error, invalid id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cannot find a row with id: 1 in transactionbeverages table."
+                }
+              }
+            }
+          },
           "500": {
             "description": "Server encountered an error while fetching beverages from `transactionbeverages table`.",
             "schema": {
@@ -882,6 +894,18 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/TransactionRecommendedBeverage"
+              }
+            }
+          },
+          "400": {
+            "description": "Client error, invalid id.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "info": {
+                  "type": "string",
+                  "example": "Cannot find a row with id: 1 in transactionrecommendedbeverages table."
+                }
               }
             }
           },
@@ -1689,9 +1713,9 @@
           "type": "number",
           "example": 20
         },
-        "emotion_id": {
-          "type": "number",
-          "example": 1
+        "emotion": {
+          "type": "string",
+          "example": "happy"
         },
         "weather": {
           "type": "string",

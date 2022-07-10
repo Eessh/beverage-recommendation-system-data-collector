@@ -415,7 +415,7 @@ const getTransactionById = async (req, res) => {
   }
 };
 
-const getFullTransactionById = async () => {
+const getFullTransactionById = async (req, res) => {
   if (!await tableExists("beverages")) {
     console.log("Log: Table: beverages has not been created yet.");
     // returning a server error
@@ -449,17 +449,27 @@ const getFullTransactionById = async () => {
   }
   else {
     client.query(`
-      SELECT *
-      FROM transactions
-      WHERE id=$1
-    `, [transactionId], (err, results) => {
-      if (err) {
-        console.log(`Log: Error occurred while getting transaction, transaction_id: ${transactionId}, Error: `, err);
+      SELECT transaction.id as id, time, season, age, gender, emotions.name as emotion, weather, temperature
+      FROM emotions, (
+        SELECT *
+        FROM transactions
+        WHERE transactions.id=$1
+      ) as transaction
+      WHERE transaction.emotion_id=emotions.id
+    `, [transactionId], (err0, results0) => {
+      if (err0) {
+        console.log(`Log: Error occurred while getting transaction, transaction_id: ${transactionId}, Error: `, err0);
         // returning a server error
         res.status(500).json({info: `Error occurred while getting transaction, transaction_id: ${transactionId}.`});
         return;
       }
-      transactionData = results.rows[0];
+      if (results0.rows.length < 1) {
+        console.log(`Log: Cannot find a row with id: ${transactionId} in transactions table.`);
+        // returning a client error
+        res.status(400).json({info: `Cannot find a row with id: ${transactionId} in transactions table.`});
+        return;
+      }
+      transactionData = results0.rows[0];
       client.query(`
         SELECT name
         FROM beverages
@@ -468,15 +478,21 @@ const getFullTransactionById = async () => {
           FROM transactionbeverages
           WHERE transaction_id=$1
         )
-      `, [transactionId], (err, results) => {
-        if (err) {
-          console.log(`Log: Error occurred while getting transaction beverages, transaction_id: ${transactionId}, Error: `, err);
+      `, [transactionId], (err1, results1) => {
+        if (err1) {
+          console.log(`Log: Error occurred while getting transaction beverages, transaction_id: ${transactionId}, Error: `, err1);
           // returning a server error
           res.status(500).json({info: `Error occurred while getting transaction beverages, transaction_id: ${transactionId}.`});
           return;
         }
+        if (results1.rows.length < 1) {
+          console.log(`Log: Cannot find a row with transaction_id: ${transactionId} in transactionbeverages table.`)
+          // returning a server erorr
+          res.status(500).json({info: `Cannot find a row with transaction_id: ${transactionId} in transactionbeverages table.This error may have occured while adding a transaction (inserting beverages into transactionbeverages table).`});
+          return;
+        }
         transactionData.beverages = [];
-        results.rows.forEach(beverage => transactionData.beverages.push(beverage));
+        results1.rows.forEach(beverage => transactionData.beverages.push(beverage));
         client.query(`
           SELECT name
           FROM beverages
@@ -485,16 +501,22 @@ const getFullTransactionById = async () => {
             FROM transactionrecommendedbeverages
             WHERE transaction_id=$1
           )
-        `, [transactionId], (err, results) => {
-          if (err) {
-            console.log(`Log: Error occurred while getting transaction recommended beverages, transaction_id: ${transactionData}, Error: `, err);
+        `, [transactionId], (err2, results2) => {
+          if (err2) {
+            console.log(`Log: Error occurred while getting transaction recommended beverages, transaction_id: ${transactionData}, Error: `, err2);
             // returning a server error
             res.status(500).json({info: `Error occurred while getting transaction recommended beverages, transaction_id: ${transactionData}.`});
             return;
           }
+          if (results2.rows.length < 1) {
+            console.log(`Log: Cannot find a row with transaction_id: ${transactionId} in transactionrecommendedbeverages table.`);
+            // returning a server error
+            res.status(500).json({info: `Cannot find a row with transaction_id: ${transactionId} in transactionrecommendedbeverages table.This error may have occured while adding a transaction (inserting recommended_beverages into transactionrecommendedbeverages table).`});
+            return;
+          }
           transactionData.recommendedBeverages = [];
-          results.rows.forEach(recommendedBeverage => transactionData.recommendedBeverages.push(recommendedBeverage));
-          res.send(200).json({transactionData: transactionData});
+          results2.rows.forEach(recommendedBeverage => transactionData.recommendedBeverages.push(recommendedBeverage));
+          res.status(200).json({transactionData: transactionData});
         });
       });
     });
@@ -768,12 +790,12 @@ const getTransactionBeveragesById = async (req, res) => {
       return;
     }
     if (results.rows.length < 1) {
-      console.log(`Log: Cannot find a row with id: ${id} in transactionbeverages table.`);
+      console.log(`Log: Cannot find a row with id: ${transactionId} in transactionbeverages table.`);
       // returning a client error
-      res.status(400).json({info: `Cannot find a row with id: ${id} in transactionbeverages table.`});
+      res.status(400).json({info: `Cannot find a row with id: ${transactionId} in transactionbeverages table.`});
       return;
     }
-    console.log(`Log: Row with id: ${id} in transactionbeverages table: `, results.rows);
+    console.log(`Log: Row with id: ${transactionId} in transactionbeverages table: `, results.rows);
     res.status(200).json(results.rows);
   });
 };
@@ -838,12 +860,12 @@ const getTransactionRecommendedBeveragesById = async (req, res) => {
       return;
     }
     if (results.rows.length < 1) {
-      console.log(`Log: Cannot find a row with id: ${id} in transactionrecommendedbeverages table.`);
+      console.log(`Log: Cannot find a row with id: ${transactionId} in transactionrecommendedbeverages table.`);
       // returning a client error
-      res.status(400).json({info: `Cannot find a row with id: ${id} in transactionrecommendedbeverages table.`});
+      res.status(400).json({info: `Cannot find a row with id: ${transactionId} in transactionrecommendedbeverages table.`});
       return;
     }
-    console.log(`Log: Row with id: ${id} in transactionrecommendedbeverages table: `, results.rows);
+    console.log(`Log: Row with id: ${transactionId} in transactionrecommendedbeverages table: `, results.rows);
     res.status(200).json(results.rows);
   });
 };

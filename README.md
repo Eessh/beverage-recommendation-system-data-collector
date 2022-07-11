@@ -1,4 +1,11 @@
-# Data Collector for [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/tree/recommendation_using_only_emotion)
+<h1 align="center">
+    <img src="./public/logo.svg" valign="middle" width="120" height="120" alt="logo" style="margin: 100px;" />
+    <a href="https://beverage-recommendation-system.herokuapp.com">
+        <span valign="middle">
+                Data Collector API
+        </span>
+    </a>
+</h1>
 
 A simple api for a database, which stores the transactions made in the app: [Beverage Recommendation System](https://github.com/Eessh/beverage-recommendation-system/tree/recommendation_using_only_emotion)
 

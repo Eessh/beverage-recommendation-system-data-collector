@@ -7,8 +7,9 @@ const swaggerUI = require("swagger-ui-express");
 const app = express();
 const swaggerDoc = require("./swagger.json");
 const customCss = fs.readFileSync((process.cwd()+"/swagger.css"), 'utf8');
-app.use(cors());
+app.use(cors({origin: "*"}));
 app.use(express.json());
+app.use(express.static("public"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc, {customCss}));
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -57,7 +58,8 @@ const {
 } = require("./HerokuDBQueries");
 
 app.get("/", (req, res) => {
-  res.status(200).json({info: "Server Running"});
+  // res.status(200).json({info: "Server Running"});
+  res.sendFile(__dirname + "public/index.html", (err) => console.log("Error while sending index.html: ", err));
 });
 
 app.get("/beverages/id", getBeverageById);

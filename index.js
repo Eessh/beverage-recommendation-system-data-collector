@@ -7,7 +7,9 @@ const swaggerUI = require("swagger-ui-express");
 const app = express();
 const swaggerDoc = require("./swagger.json");
 const customCss = fs.readFileSync((process.cwd()+"/swagger.css"), 'utf8');
-app.use(cors({origin: "*"}));
+app.use(cors({
+  origin: "https://beverage-recommendation-system.netlify.app"
+}));
 app.use(express.json());
 app.use(express.static("public"));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc, {customCss}));

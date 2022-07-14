@@ -121,18 +121,39 @@ const addBeverage = async (req, res) => {
       res.status(400).json({info: "Request should contain beverage field in body."});
       return;
     }
-    
+
+    // checking whether the given beverage already exists
     client.query(`
-      INSERT INTO beverages (name) VALUES ($1)
-    `, [beverage], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while inserting beverage: ${beverage}, Erorr: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while inserting beverage: ${beverage}`});
+      SELECT *
+      FROM beverages
+      WHERE name=$1
+    `, [beverage], (err0, results0) => {
+      if (err0) {
+        console.log(`Log: Error while checking for presence of beverage: ${beverage} in beverages table, Error: `, err0);
+        // returning a server error
+        res.status(500).json({info: `Error while checking for presence of beverage: ${beverage} in beverages table.`});
         return;
       }
-      console.log(`Log: Added beverage: ${beverage} into beverages table.`);
-      res.status(200).json({info: `Added beverage: ${beverage} into beverages table.`});
+      if (results0.rows.length > 0) {
+        // beverage with the same name already exists in beverages table
+        console.log(`Log: Beverage with the same name: ${beverage} already exists in beverages table.`);
+        // returning a client error
+        res.status(400).json({info: `Beverage with the same name: ${beverage} already exists in beverages table.`});
+        return;
+      }
+      // inserting beverage into beverages table
+      client.query(`
+        INSERT INTO beverages (name) VALUES ($1)
+      `, [beverage], (err, results) => {
+        if (err) {
+          console.log(`Log: Error while inserting beverage: ${beverage}, Erorr: `, err);
+          // returning server error
+          res.status(500).json({info: `Error while inserting beverage: ${beverage}`});
+          return;
+        }
+        console.log(`Log: Added beverage: ${beverage} into beverages table.`);
+        res.status(200).json({info: `Added beverage: ${beverage} into beverages table.`});
+      });
     });
   }
 };
@@ -267,16 +288,37 @@ const addEmotion = async (req, res) => {
       res.status(400).json({info: "Request should contain emotion field in body!!!"});
       return;
     }
+
+    // checking whether the given emotion already exists
     client.query(`
-      INSERT INTO emotions (name) VALUES ($1)
-    `, [emotion], (err, results) => {
-      if (err) {
-        console.log(`Log: Error while inserting emotion: ${emotion}, Error: `, err);
-        // returning server error
-        res.status(500).json({info: `Error while inserting emotion: ${emotion}.`});
+      SELECT *
+      FROM emotions
+      WHERE name=$1
+    `, [emotion], (err0, results0) => {
+      if (err0) {
+        console.log(`Log: Error while checking presence of emotion: ${emotion} in the emotions table.`);
+        // returning a server error
+        res.status(500).json({info: `Error while checking presence of emotion: ${emotion} in the emotions table.`});
+        return;
       }
-      console.log(`Log: Added emotion: ${emotion} into emotions table.`);
-      res.status(200).json({info: `Added emotion: ${emotion} into emotions table.`});
+      if (results0.rows.length > 0) {
+        // found an emotion with the same name in emotions table
+        console.log(`Log: Emotion with the same name: ${emotion} was already present in emotions table.`);
+        // returning a client error
+        res.status(400).json({info: `Emotion with the same name: ${emotion} was already present in emotions table.`});
+        return;
+      }
+      client.query(`
+        INSERT INTO emotions (name) VALUES ($1)
+      `, [emotion], (err, results) => {
+        if (err) {
+          console.log(`Log: Error while inserting emotion: ${emotion}, Error: `, err);
+          // returning server error
+          res.status(500).json({info: `Error while inserting emotion: ${emotion}.`});
+        }
+        console.log(`Log: Added emotion: ${emotion} into emotions table.`);
+        res.status(200).json({info: `Added emotion: ${emotion} into emotions table.`});
+      });
     });
   }
 }

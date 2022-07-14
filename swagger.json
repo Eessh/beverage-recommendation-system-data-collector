@@ -1693,14 +1693,6 @@
     "AddTransactionSchema": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "number",
-          "example": 1
-        },
-        "time": {
-          "type": "string",
-          "example": "2022-07-04T23:44:31.035Z"
-        },
         "season": {
           "type": "string",
           "example": "rainy"
